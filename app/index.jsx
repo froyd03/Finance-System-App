@@ -1,0 +1,163 @@
+import { 
+    KeyboardAvoidingView, 
+    Pressable, 
+    StyleSheet, 
+    Text, 
+    View,
+    StatusBar,
+    AppState  
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomTextInput from '../components/CustomTextInput';
+import { Link } from 'expo-router';
+import React, { useEffect } from 'react';
+
+
+export default function Login() {
+
+    useEffect(() => {
+        const sub = AppState.addEventListener("change", (state) => {
+            if (state === "active") {
+                StatusBar.setBackgroundColor("#00d09e");
+                StatusBar.setBarStyle("light-content");
+            }
+        });
+
+        return () => sub.remove();
+    }, []);
+
+    return (
+        <>
+        <StatusBar style="light" backgroundColor="#00d09e" />
+
+        <SafeAreaView style={styles.mainContainer}>
+            <Text style={styles.textH1}>Welcome</Text>
+
+            <KeyboardAvoidingView style={styles.formContainer}>
+                <View style={styles.inputContainer}>
+                    <View style={styles.labeltxtInputContainer}>
+                        <Text style={styles.label}>Username or Email</Text>
+                        <CustomTextInput placeholder="example@gmail.com" TextInputStyle={styles.textInput}/>
+                    </View>
+
+                    <View style={styles.labeltxtInputContainer}>
+                        <Text style={styles.label}>Password</Text>
+                        <CustomTextInput secureTextEntry TextInputStyle={styles.textInput}/>
+                        <Text>Forgot password?</Text>
+                    </View>
+
+                    <View style={styles.btnContainer}>
+                        <Pressable style={styles.mainBtn}>
+                            <Text style={styles.btnTxt}>Log In</Text>
+                        </Pressable>
+
+                        <Text style={styles.label}>or</Text>
+                        
+                        <Link href="/signup" asChild>
+                            <Pressable style={styles.secondaryBtn}>
+                                <Text style={styles.btnTxt}>Sign Up</Text>
+                            </Pressable>
+                        </Link>
+                    </View>
+                </View>
+
+            </KeyboardAvoidingView>
+
+        </SafeAreaView>
+        
+        </>
+  );
+}
+
+const styles = StyleSheet.create({
+    safeArea: {
+        gap: '8%'
+    },
+
+    mainContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        backgroundColor: '#00d09e'
+    },
+
+    formContainer: {
+        backgroundColor: '#ffffffd6',
+        height: '80%',
+        width: '100%',
+        borderTopLeftRadius: 50,
+        borderTopRightRadius: 50,
+        alignItems: 'center',
+    },
+
+    inputContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        marginTop: '18%',
+        width: '80%',
+        gap: 25
+
+    },
+
+    labeltxtInputContainer: {
+        gap: 10
+    },
+
+    btnContainer: {
+        width: '100%',
+        marginTop: '8%',
+        alignItems: 'center',
+        gap: 10
+    },
+
+    label: {
+        fontWeight: 500,
+        color: '#000000d0',
+    },
+
+    textH1: {
+        fontSize: 28,
+        fontWeight: 600,
+        alignSelf: 'center',
+        marginTop: '12%'
+    },
+
+    textInput: {
+        height: 48,
+        width: '100%',
+        borderRadius: 12,
+        paddingHorizontal: 18,
+        backgroundColor: '#0000001a'
+    },
+
+    mainBtn:{
+        backgroundColor: '#00d09e',
+        padding: 14,
+        width: '60%',
+        borderRadius: 12,
+        alignItems: 'center',
+        marginTop: 8
+    },
+
+    secondaryBtn:{
+        backgroundColor: '#00d0a025',
+        padding: 14,
+        width: '60%',
+        borderRadius: 12,
+        alignItems: 'center',
+        marginTop: 8
+    },
+
+    btnTxt: {
+        fontWeight: 500,
+        fontSize: 16
+    },
+
+    txtForgotPass: {
+        textAlign: 'right',
+        width: '85%',
+        alignSelf: 'center',
+        color: '#0000009f',
+    },
+
+})
