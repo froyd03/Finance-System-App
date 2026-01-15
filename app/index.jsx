@@ -47,9 +47,11 @@ export default function Login() {
                     </View>
 
                     <View style={styles.btnContainer}>
-                        <Pressable style={styles.mainBtn}>
-                            <Text style={styles.btnTxt}>Log In</Text>
-                        </Pressable>
+                        <Link href="home" asChild>
+                            <Pressable style={styles.mainBtn}>
+                                <Text style={styles.btnTxt}>Log In</Text>
+                            </Pressable>
+                        </Link>
 
                         <Text style={styles.label}>or</Text>
                         
@@ -64,9 +66,8 @@ export default function Login() {
             </KeyboardAvoidingView>
 
         </SafeAreaView>
-        
         </>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
