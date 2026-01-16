@@ -1,15 +1,36 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import Savings from "../../assets/icons/Savings";
 
 export default function HomeScreen() {
     return (
-        <SafeAreaView>
-            
+        <SafeAreaView style={styles.body}>
+            <View style={styles.headerDashboard}>
+
+            </View>
+            <View style={styles.itemContents}>
+
+            </View>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
- 
+    body: {
+        flexDirection: "column",
+        height: "100%",
+        backgroundColor: "#00d09e",
+    },
+
+    headerDashboard: {
+        height: "30%",
+       
+    },
+    
+    itemContents: {
+        height: "70%",
+        borderTopLeftRadius: 50,
+        borderTopRightRadius: 50,
+        backgroundColor: "#FFFFFF",
+    }
 });

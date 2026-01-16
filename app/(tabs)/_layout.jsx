@@ -1,11 +1,11 @@
 import { Tabs } from "expo-router";
-import Ionicons from '@expo/vector-icons/Ionicons';
 import Octicons from '@expo/vector-icons/Octicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TransactionIcon from '../../assets/icons/TransactionIcon';
 import AnalysisIcon from "@/assets/icons/AnalysisIcon";
 import Home from "@/assets/icons/Home";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, StatusBar } from "react-native";
+import Header from "@/components/Header";
 
 function TabIcon({ focused, icon }){
 
@@ -18,28 +18,39 @@ function TabIcon({ focused, icon }){
         </View>
     )
 }
-        
+
+const CustomHeader = ({ navigation, route }) => {
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', height: 60, backgroundColor: '#f0f0f0' }}>
+            <Text>Screen</Text>
+            {/* Add custom buttons or elements here */}
+        </View>
+    );
+};
 
 export default function TabLayout() {
 
-
     return (
+        <>
+        <StatusBar style="light" backgroundColor="#00d09e" />
         <Tabs 
             screenOptions={{
                 tabBarStyle: styles.tabContainer,
                 tabBarItemStyle: styles.tabItems,
                 tabBarIconStyle: styles.tabIcons,
                 tabBarShowLabel: false,
-
+                headerStyle: { backgroundColor: "#00d09e" },
             }}
         > 
             <Tabs.Screen 
                 name="home" 
                 options={{ 
+                    headerShown: true,
+                    headerTitle: "Hi, Welcome Back!",
                     title: "Home", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
-                        icon={<Home color="#000000a2" />} 
+                        icon={<Home size={24} color="#000000a2" />} 
                     /> 
                 }}
             />
@@ -47,9 +58,10 @@ export default function TabLayout() {
                 name="analysis" 
                 options={{ 
                     title: "Analysis", 
+                    header: () => <Header />,
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
-                        icon={<AnalysisIcon color="#000000a2" />} 
+                        icon={<AnalysisIcon size={24} color="#000000a2" />} 
                     />
                 }} 
             />
@@ -59,7 +71,7 @@ export default function TabLayout() {
                     title: "Transactions", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
-                        icon={<TransactionIcon color="#000000a2" />} 
+                        icon={<TransactionIcon size={24} color="#000000a2" />} 
                     />
                 }}
             />
@@ -86,6 +98,7 @@ export default function TabLayout() {
                 }}
                 />
         </Tabs>
+        </>
     );
 }
 
