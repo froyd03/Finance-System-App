@@ -5,7 +5,6 @@ import TransactionIcon from '../../assets/icons/TransactionIcon';
 import AnalysisIcon from "@/assets/icons/AnalysisIcon";
 import Home from "@/assets/icons/Home";
 import { StyleSheet, View, StatusBar } from "react-native";
-import Header from "@/components/Header";
 
 function TabIcon({ focused, icon }){
 
@@ -19,15 +18,6 @@ function TabIcon({ focused, icon }){
     )
 }
 
-const CustomHeader = ({ navigation, route }) => {
-    return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', height: 60, backgroundColor: '#f0f0f0' }}>
-            <Text>Screen</Text>
-            {/* Add custom buttons or elements here */}
-        </View>
-    );
-};
-
 export default function TabLayout() {
 
     return (
@@ -40,13 +30,13 @@ export default function TabLayout() {
                 tabBarIconStyle: styles.tabIcons,
                 tabBarShowLabel: false,
                 headerStyle: { backgroundColor: "#00d09e" },
+                headerShown: true,
             }}
         > 
             <Tabs.Screen 
                 name="home" 
                 options={{ 
-                    headerShown: true,
-                    headerTitle: "Hi, Welcome Back!",
+                    headerShown: false,
                     title: "Home", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
@@ -58,7 +48,6 @@ export default function TabLayout() {
                 name="analysis" 
                 options={{ 
                     title: "Analysis", 
-                    header: () => <Header />,
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
                         icon={<AnalysisIcon size={24} color="#000000a2" />} 
