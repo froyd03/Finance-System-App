@@ -23,11 +23,11 @@ const styles = StyleSheet.create({
     },
 
     headerDashboard: {
-        height: "30%",
+        height: "32%",
     },
     
     itemContents: {
-        height: "70%",
+        height: "68%",
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
         backgroundColor: "#FFFFFF",

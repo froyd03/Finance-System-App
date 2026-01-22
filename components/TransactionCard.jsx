@@ -4,18 +4,23 @@ import Salary from "../assets/icons/Salary";
 export default function TransactionCard(props) {
     return (
         <View style={styles.cardContainer}>
-            <View style={styles.iconContainer}>
-               {props.icon}
-            </View>
+
             <View style={styles.titleContainer}>
-                <Text style={{fontSize: 15, color: "#000000b7", fontWeight: "bold"}}>{props.title}</Text>
-                <Text style={{fontSize: 12, color: "#0068FF", fontWeight: "bold"}}>{props.date}</Text>
+                <View style={styles.iconContainer}>
+                    {props.icon}
+                </View>
+                <View style={{justifyContent: "center", gap: 4}}>
+                     <Text style={{fontSize: 15, color: "#000000b7", fontWeight: "bold"}}>{props.title}</Text>
+                    <Text style={{fontSize: 12, color: "#0068FF", fontWeight: "bold"}}>{props.date}</Text>
+                </View>
             </View>
-            <View style={styles.seperator}></View> 
+
             <View style={styles.expenseTitle}>
+                <View style={styles.seperator}/>
                 <Text style={{fontSize: 14}}>{props.expenseTitle}</Text>
+                <View style={styles.seperator}/>
             </View>
-            <View style={styles.seperator}></View> 
+            
             <View style={styles.amount}>
                 <Text style={{fontSize: 14, color: "#000000b7", fontWeight: "bold"}}>{props.amount}</Text>
             </View>
@@ -29,7 +34,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "100%",
+        width: "95%",
+        gap: 4,
     },
 
     iconContainer: {
@@ -39,9 +45,22 @@ const styles = StyleSheet.create({
     },
 
     titleContainer: {
-        flexDirection: "column",
-        gap: 4,
+        flexDirection: "row",
+        gap: 12,
     }, 
+
+    expenseTitle: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: "100%",
+        width: "30%",
+    },
+
+    amount: {
+        width: "20%",
+        alignItems: "flex-end",
+    },
 
     seperator: {
         width: 1,
