@@ -1,7 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
-import Salary from "../assets/icons/Salary";
+
 
 export default function TransactionCard(props) {
+
+    const dateSeperator = (dateTime) => {
+        const date = dateTime.split(" ");
+        console.log(date[2])
+    }
+
     return (
         <View style={styles.cardContainer}>
 
@@ -35,7 +41,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         width: "95%",
-        gap: 4,
     },
 
     iconContainer: {

@@ -30,13 +30,12 @@ export default function TabLayout() {
                 tabBarIconStyle: styles.tabIcons,
                 tabBarShowLabel: false,
                 headerStyle: { backgroundColor: "#00d09e" },
-                headerShown: true,
+                headerShown: false,
             }}
         > 
             <Tabs.Screen 
                 name="home" 
                 options={{ 
-                    headerShown: false,
                     title: "Home", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
@@ -47,7 +46,6 @@ export default function TabLayout() {
             <Tabs.Screen 
                 name="analysis" 
                 options={{ 
-                    headerShown: false,
                     title: "Analysis", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
@@ -58,7 +56,6 @@ export default function TabLayout() {
             <Tabs.Screen 
                 name="transactions" 
                 options={{ 
-                    headerShown: false,
                     title: "Transactions", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 

@@ -8,6 +8,8 @@ import Groceries from "../../assets/icons/Groceries";
 import Rent from "../../assets/icons/Rent";
 import Car from "../../assets/icons/Car";
 import Foods from "../../assets/icons/Foods";
+import Transport from "../../assets/icons/Transport"
+import Gifts from "../../assets/icons/Gifts"
 import { useEffect, useRef } from "react";
 
 export default function HomeScreen() {
@@ -39,16 +41,16 @@ export default function HomeScreen() {
         },
         {  
             id: 4,
-            icon: <Rent size={24} color="#FFFFFF" />,
-            title: "Rent",
+            icon: <Transport size={24} color="#FFFFFF" />,
+            title: "Transport",
             date: "12:45 - May 1",
             expenseTitle: "Rent",  
             amount: "-$600.00"
         },
         {  
             id: 5,
-            icon: <Rent size={24} color="#FFFFFF" />,
-            title: "Rent",
+            icon: <Foods size={24} color="#FFFFFF" />,
+            title: "Food",
             date: "12:45 - May 1",
             expenseTitle: "Rent",  
             amount: "-$600.00"
@@ -63,8 +65,8 @@ export default function HomeScreen() {
         },
         {
             id: 7,
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
+            icon: <Gifts size={24} color="#FFFFFF" />,
+            title: "Gifts",
             date: "12:45 - May 1",
             expenseTitle: "Pantry",  
             amount: "-300.00"
@@ -209,8 +211,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFFFF",
         alignItems: "center",
         flexDirection: "column",
-        padding: 20,
-        gap: 20,
+        paddingHorizontal: 20,
+        paddingTop: 12
     },
 
     h2Text:{
