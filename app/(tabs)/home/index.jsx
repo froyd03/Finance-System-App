@@ -1,99 +1,34 @@
 import { Pressable, FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import DashboardContent from "../../components/DashboardContent";
-import TransactionCards from "../../components/TransactionCard";
-import Salary from "../../assets/icons/Salary";
-import Groceries from "../../assets/icons/Groceries";
-import Rent from "../../assets/icons/Rent";
-import Car from "../../assets/icons/Car";
-import Foods from "../../assets/icons/Foods";
-import Transport from "../../assets/icons/Transport"
-import Gifts from "../../assets/icons/Gifts"
+import DashboardContent from "../../../components/DashboardContent";
 import { useEffect, useRef } from "react";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import TemplateCard from "../../../components/TemplateCard"
+import { Family, Student, Profile, Foods, Car, Salary } from "@/assets/icons/SvgIcons";
 
 export default function HomeScreen() {
 
-    const transactionItem = [
+    const templateData = [
         {
             id: 1,
-            icon: <Salary size={24} color="#FFFFFF" />,
-            title: "Salary",
-            date: "12:45 - May 1",
-            expenseTitle: "Allowance",
-            amount: "$1,200.00" 
+            icon: <Student size={24} color="#FFF"/>,
+            title: "Student Budget",
+            budgetDuration: "Weekly"
         },
         {
             id: 2,
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - May 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
+            icon: <Family size={24} color="#FFF"/>,
+            title: "Family Essentials",
+            budgetDuration: "Monthly"
         },
-        {  
+        {
             id: 3,
-            icon: <Rent size={24} color="#FFFFFF" />,
-            title: "Rent",
-            date: "12:45 - May 1",
-            expenseTitle: "Rent",  
-            amount: "-$600.00"
+            icon: <Profile size={24} color="#FFF"/>,
+            title: "Everyday Spending",
+            budgetDuration: "Daily"
         },
-        {  
-            id: 4,
-            icon: <Transport size={24} color="#FFFFFF" />,
-            title: "Transport",
-            date: "12:45 - May 1",
-            expenseTitle: "Rent",  
-            amount: "-$600.00"
-        },
-        {  
-            id: 5,
-            icon: <Foods size={24} color="#FFFFFF" />,
-            title: "Food",
-            date: "12:45 - May 1",
-            expenseTitle: "Rent",  
-            amount: "-$600.00"
-        },
-        {
-            id: 6,
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - May 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            id: 7,
-            icon: <Gifts size={24} color="#FFFFFF" />,
-            title: "Gifts",
-            date: "12:45 - May 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-    ]
-
-    const btnRef = useRef([]);
-    const activeBtn = (btnNumber) => {
-
-        btnRef.current.forEach((btn, index) => {
-            if(index === btnNumber){
-                btn.setNativeProps({
-                    style: {backgroundColor: "#00d09e"},
-                });
-            }else{
-                btn.setNativeProps({
-                    style: {backgroundColor: "#ffffff00"}
-                });
-            }
-        });
-    }
-
-    useEffect(() => {
-        btnRef.current[0].setNativeProps({
-            style: {backgroundColor: "#00d09e"},
-        });
-    }, [])
+    ];
 
     return (
         <SafeAreaView style={styles.body}>
@@ -113,7 +48,7 @@ export default function HomeScreen() {
 
                 <FlatList
                     ListHeaderComponent={
-                        <View style={{ gap: 18 }}>
+                        <View style={{ gap: 28 }}>
                             <View style={styles.monthlyUpdates}>
                                 <View style={{width:"35%", justifyContent: "center", alignItems: "center",}}>
                                     <View style={styles.iconCircle}>
@@ -142,43 +77,35 @@ export default function HomeScreen() {
                                     </View>
                                 </View>
                             </View>
-                            <View style={styles.tabBtn}>
-                                <Pressable 
-                                    onPressOut={() => activeBtn(0)}
-                                    style={styles.itemBtn}
-                                    ref={(element) => btnRef.current[0] = element}
-                                >
-                                    <Text>Daily</Text>
-                                </Pressable>
-                                <Pressable 
-                                    onPressOut={() => activeBtn(1)} 
-                                    style={styles.itemBtn}
-                                    ref={(element) => btnRef.current[1] = element}
-                                >
-                                    <Text>Weekly</Text>
-                                </Pressable>
-                                <Pressable 
-                                    onPressOut={() => activeBtn(2)} 
-                                    style={styles.itemBtn}
-                                    ref={(element) => btnRef.current[2] = element}
-                                >
-                                    <Text>Monthly</Text>
+                            <View style={styles.templateHeader}>
+                                <Text style={{fontWeight: "500", fontSize: 16}}>
+                                    Quick Start Templates
+                                </Text>
+                                <Pressable style={styles.addBtn}>
+                                    <FontAwesome6 name="add" size={18} color="#000"/>
                                 </Pressable>
                             </View>
                         </View>
                     }
                     contentContainerStyle={styles.itemContainer}
-                    data={transactionItem}
+                    data={templateData}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <TransactionCards 
-                        icon={item.icon}
-                        title={item.title}
-                        date={item.date}
-                        expenseTitle={item.expenseTitle}
-                        amount={item.amount}
-                    />}
+                    renderItem={({ item }) => 
+                        <TemplateCard 
+                            icon={item.icon}
+                            title={item.title}
+                            budgetDuration={item.budgetDuration}
+                        />
+                    }
                     showsVerticalScrollIndicator={false}
                 />
+                {/* <FlatList 
+                    ListHeaderComponent={
+                        <Text style={{fontWeight: "500", fontSize: 16}}>
+                            Custom Templates
+                        </Text>
+                    }
+                /> */}
             </View>
         </SafeAreaView>
     )
@@ -237,30 +164,26 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
 
-    tabBtn: {
-        width: "100%",
-        height: 50,
-        borderRadius: 12,
-        backgroundColor: "#dff7e2", 
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-    },
-
     itemContainer: {
         width: "100%",
         flexDirection: "column",
         gap: 22,
         alignItems: "center",
     },
-    
-    itemBtn: {
-        alignItems: "center",
-        width: 90,
-        padding: 10,
-        borderRadius: 12,
+
+    templateHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
     },
 
+    addBtn: {
+        backgroundColor: "#00D09E",
+        paddingVertical: 6,
+        paddingHorizontal: 8,
+        borderRadius: 12
+    },
+    
     iconCircle: {
         width: 70,
         height: 70,

@@ -1,7 +1,7 @@
 import { View, ScrollView, Text, StyleSheet, Pressable, Dimensions } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DashboardContent from "../../components/DashboardContent";
+import DashboardContent from "../../../components/DashboardContent";
 import { BarChart } from "react-native-gifted-charts";
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';

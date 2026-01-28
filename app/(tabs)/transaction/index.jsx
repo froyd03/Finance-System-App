@@ -2,14 +2,18 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Ionicons from '@expo/vector-icons/Ionicons';
-import TransactionCard from "../../components/TransactionCard";
-import Salary from "../../assets/icons/Salary";
-import Groceries from "../../assets/icons/Groceries";
-import Rent from "../../assets/icons/Rent";
-import Car from "../../assets/icons/Car";
-import Foods from "../../assets/icons/Foods";
-import Transport from "../../assets/icons/Transport"
-import Gifts from "../../assets/icons/Gifts"
+import TransactionCard from "../../../components/TransactionCard";
+import { 
+    Groceries, 
+    Foods, 
+    Salary, 
+    Rent, 
+    Gifts, 
+    Transport,
+    Savings,
+    Medicine,
+    Entertainment,
+} from "@/assets/icons/SvgIcons";
 
 const transactions = () => {
 

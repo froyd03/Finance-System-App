@@ -6,24 +6,27 @@ import {
     View,
     StatusBar,
     Platform,
-    AppState  
+    AppState,
+    Keyboard
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomTextInput from '../components/CustomTextInput';
 import { Link } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default function SignUp() {
 
-    useEffect(() => {
-        const sub = AppState.addEventListener("change", (state) => {
-            if (state === "active") {
-                StatusBar.setBackgroundColor("#00d09e");
-                StatusBar.setBarStyle("light-content");
-            }
-        });
+    const appState = useRef(AppState.currentState);
 
-        return () => sub.remove();
+    useEffect(() => {
+    const sub = AppState.addEventListener("change", nextState => {
+        if (appState.current.match(/inactive|background/) && nextState === "active") {
+            Keyboard.dismiss();
+        }
+        appState.current = nextState;
+    });
+
+    return () => sub.remove();
     }, []);
 
     return (
@@ -35,8 +38,9 @@ export default function SignUp() {
 
             <KeyboardAvoidingView 
                 style={styles.formContainer} 
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                behavior="height"
                 enabled={true}
+                keyboardVerticalOffset="240"
             >
                 <View style={styles.inputContainer}>
                     <View style={styles.labeltxtInputContainer}>
@@ -82,14 +86,14 @@ const styles = StyleSheet.create({
     },
 
     mainContainer: {
-        flex: 1,
+        
         flexDirection: 'column',
         justifyContent: 'space-between',
         backgroundColor: '#00d09e'
     },
 
     formContainer: {
-        backgroundColor: '#ffffffd6',
+        backgroundColor: '#ffffff',
         height: '80%',
         width: '100%',
         borderTopLeftRadius: 50,

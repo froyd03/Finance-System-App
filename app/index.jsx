@@ -15,16 +15,7 @@ import React, { useEffect } from 'react';
 
 export default function Login() {
 
-    useEffect(() => {
-        const sub = AppState.addEventListener("change", (state) => {
-            if (state === "active") {
-                StatusBar.setBackgroundColor("#00d09e");
-                StatusBar.setBarStyle("light-content");
-            }
-        });
-
-        return () => sub.remove();
-    }, []);
+  
 
     return (
         <>
@@ -42,7 +33,7 @@ export default function Login() {
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Password</Text>
-                        <CustomTextInput secureTextEntry TextInputStyle={styles.textInput}/>
+                        <CustomTextInput secureTextEntry placeholder="••••••••••" TextInputStyle={styles.textInput}/>
                         <Text>Forgot password?</Text>
                     </View>
 
@@ -83,7 +74,7 @@ const styles = StyleSheet.create({
     },
 
     formContainer: {
-        backgroundColor: '#ffffffd6',
+        backgroundColor: '#ffffff',
         height: '80%',
         width: '100%',
         borderTopLeftRadius: 50,

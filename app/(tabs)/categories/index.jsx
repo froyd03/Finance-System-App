@@ -1,18 +1,19 @@
 import { StyleSheet, Pressable, Text, View } from 'react-native'
 import React, { } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DashboardContent from "../../components/DashboardContent";
-import Salary from "../../assets/icons/Salary";
-import Groceries from "../../assets/icons/Groceries";
-import Rent from "../../assets/icons/Rent";
-import Car from "../../assets/icons/Car";
-import Foods from "../../assets/icons/Foods";
-import Transport from "../../assets/icons/Transport"
-import Gifts from "../../assets/icons/Gifts"
-import Medicine from "../../assets/icons/Medicine"
-import Savings from "../../assets/icons/Savings"
-import Entertainment from "../../assets/icons/Entertainment"
+import DashboardContent from "../../../components/DashboardContent";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { 
+    Groceries, 
+    Foods, 
+    Salary, 
+    Rent, 
+    Gifts, 
+    Transport,
+    Savings,
+    Medicine,
+    Entertainment,
+} from "@/assets/icons/SvgIcons";
 
 const categories = () => {
 
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
 
     headerDashboard: {
         height: "32%",
+        justifyContent: "center"
     },
     
     itemContents: {
@@ -111,6 +113,7 @@ const styles = StyleSheet.create({
         columnGap: 20,
         rowGap: 44,
         flexWrap: "wrap",
+        justifyContent: "center"
     },
 
     btnContainer: {

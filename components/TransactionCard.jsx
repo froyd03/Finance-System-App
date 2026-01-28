@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
 
-
 export default function TransactionCard(props) {
 
     const dateSeperator = (dateTime) => {
@@ -16,7 +15,7 @@ export default function TransactionCard(props) {
                     {props.icon}
                 </View>
                 <View style={{justifyContent: "center", gap: 4}}>
-                     <Text style={{fontSize: 15, color: "#000000b7", fontWeight: "bold"}}>{props.title}</Text>
+                    <Text style={{fontSize: 15, color: "#000000b7", fontWeight: "bold"}}>{props.title}</Text>
                     <Text style={{fontSize: 12, color: "#0068FF", fontWeight: "bold"}}>{props.date}</Text>
                 </View>
             </View>

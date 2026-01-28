@@ -1,9 +1,6 @@
 import { Tabs } from "expo-router";
 import Octicons from '@expo/vector-icons/Octicons';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import TransactionIcon from '../../assets/icons/TransactionIcon';
-import AnalysisIcon from "@/assets/icons/AnalysisIcon";
-import Home from "@/assets/icons/Home";
+import { Analysis, Profile, Home, Transaction } from "@/assets/icons/SvgIcons";
 import { StyleSheet, View, StatusBar } from "react-native";
 
 function TabIcon({ focused, icon }){
@@ -34,7 +31,7 @@ export default function TabLayout() {
             }}
         > 
             <Tabs.Screen 
-                name="home" 
+                name="home/index" 
                 options={{ 
                     title: "Home", 
                     tabBarIcon: ({focused}) => 
@@ -44,27 +41,27 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen 
-                name="analysis" 
+                name="analysis/index" 
                 options={{ 
                     title: "Analysis", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
-                        icon={<AnalysisIcon size={24} color="#000000a2" />} 
+                        icon={<Analysis size={24} color="#000000a2" />} 
                     />
                 }} 
             />
             <Tabs.Screen 
-                name="transactions" 
+                name="transaction/index" 
                 options={{ 
                     title: "Transactions", 
                     tabBarIcon: ({focused}) => 
                         <TabIcon focused={focused} 
-                        icon={<TransactionIcon size={24} color="#000000a2" />} 
+                        icon={<Transaction size={24} color="#000000a2" />} 
                     />
                 }}
             />
             <Tabs.Screen 
-                name="categories" 
+                name="categories/index" 
                 options={{ 
                     title: "Categories",
                     tabBarIcon: ({focused}) => 
@@ -75,16 +72,17 @@ export default function TabLayout() {
             />
         
             <Tabs.Screen 
-                name="profile" 
+                name="profile/index" 
                 options={{ 
                     title: "Profile",
                     tabBarIcon: ({focused}) => 
                         <TabIcon 
                             focused={focused} 
-                            icon={<FontAwesome5 name="user" size={24} color="#000000a2" />} 
+                            icon={<Profile size={24} color="#000000a2" />} 
                         />
                 }}
-                />
+            />
+            
         </Tabs>
         </>
     );
