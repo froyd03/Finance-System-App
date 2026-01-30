@@ -13,13 +13,13 @@ export default function TemplateCard(props) {
                     {props.icon}
                 </View>
                 <View style={{justifyContent: "center", gap: 4}}>
-                    <Text style={{fontSize: 15, color: "#000000b7", fontWeight: "bold"}}>{props.title}</Text>
-                    <Text style={{fontSize: 12, color: "#0068FF", fontWeight: "bold"}}>{props.budgetDuration} Budget</Text>
+                    <Text style={{fontSize: 15, color: "#093030", fontWeight: "bold"}}>{props.title}</Text>
+                    <Text style={{fontSize: 12, color: "#3299FF", fontWeight: "bold"}}>{props.budgetDuration} Budget</Text>
                 </View>
             </View>
 
             <View >
-                <Edit size={22} color="#0068FF"/>
+                <Edit size={22} color="#3299FF"/>
             </View>
         </View> 
     )

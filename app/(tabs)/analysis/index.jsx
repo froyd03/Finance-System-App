@@ -1,10 +1,11 @@
 import { View, ScrollView, Text, StyleSheet, Pressable, Dimensions } from 'react-native'
 import React, { useEffect, useRef } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import DashboardContent from "../../../components/DashboardContent";
 import { BarChart } from "react-native-gifted-charts";
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { ArrowDown, ArrowUp } from "@/assets/icons/SvgIcons"
 
 export default function analysis() {
 
@@ -89,6 +90,7 @@ export default function analysis() {
     
 
     return (
+    <>
       <SafeAreaView style={styles.body}>
         <View style={styles.headerDashboard}>
             <DashboardContent />
@@ -156,26 +158,27 @@ export default function analysis() {
                 </View>
                 <View style={styles.salaryStatus}>
                     <View style={styles.rowContainer}>
-                        <Ionicons name="arrow-up-right-box-outline" size={28} color="black" />
+                        <ArrowUp size={28} color="black" />
                         <Text style={{fontWeight: "500"}}>Income</Text>
-                        <Text style={{fontSize: 24, fontWeight: "500"}}>$00.00</Text>
+                        <Text style={{fontSize: 24, fontWeight: "500"}}>₱0.00</Text>
                     </View>
                     <View style={styles.rowContainer}>
-                        <Ionicons name="arrow-down-right-box-outline" wi size={28} color="#0068ff" />
+                        <ArrowDown size={28} color="#0068ff" />
                         <Text style={{fontWeight: "500"}}>Expense</Text>
-                        <Text style={{fontSize: 24, color: "#0068ff", fontWeight: "500"}}>$00.00</Text>
+                        <Text style={{fontSize: 24, color: "#0068ff", fontWeight: "500"}}>₱00.00</Text>
                     </View>
                 </View>
                 
             </ScrollView>
         </View>
       </SafeAreaView>
+      </>
     )
 }
 const styles = StyleSheet.create({
     body: {
         flexDirection: "column",
-        height: "100%",
+        flex: 1,
         backgroundColor: "#00d09e",
     },
 

@@ -3,11 +3,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Profile } from '@/assets/icons/SvgIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 const profile = () => {
 
   return (
-      <SafeAreaView style={styles.body}>
+      <SafeAreaProvider style={styles.body}>
             <View style={styles.headerDashboard}>
                 <View style={styles.profileContainer}>
                     <View style={styles.pictureContainer}>
@@ -41,7 +43,7 @@ const profile = () => {
                     </View>
                 </View>
             </View>
-      </SafeAreaView>   
+      </SafeAreaProvider>   
   )
 }
 
@@ -50,7 +52,7 @@ export default profile
 const styles = StyleSheet.create({
     body: {
         flexDirection: "column",
-        height: "100%",
+        flex: 1,
         backgroundColor: "#00d09e",
     },
 

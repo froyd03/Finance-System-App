@@ -3,6 +3,8 @@ import React, { } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DashboardContent from "../../../components/DashboardContent";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import { 
     Groceries, 
     Foods, 
@@ -18,7 +20,7 @@ import {
 const categories = () => {
 
    return (
-        <SafeAreaView style={styles.body}>
+        <SafeAreaProvider style={styles.body}>
             <View style={styles.headerDashboard}>
                     <DashboardContent />
             </View>
@@ -80,7 +82,7 @@ const categories = () => {
                     </View>
                 </View>
             </View>
-        </SafeAreaView>
+        </SafeAreaProvider>
     )
 }
 

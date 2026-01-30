@@ -1,4 +1,4 @@
-import Svg, { Path, G } from "react-native-svg";
+import Svg, { Path, G, Rect } from "react-native-svg";
 
 
 
@@ -233,4 +233,46 @@ export const Transport = (props) => {
             />
         </Svg>
     );
+};
+
+export const ArrowDown = (props) => {
+    return (
+        <Svg width={props.size} height={props.size} fill="none" viewBox="0 0 25 25" {...props}>
+            <Rect
+            width="22.917"
+            height="22.917"
+            x="1.042"
+            y="1.042"
+            stroke={props.color}
+            rx="5.208"
+            strokeWidth="2.083"
+            />
+            <Path
+            fill={props.color}
+            d="M18.75 19.792c.575 0 1.042-.467 1.042-1.042V9.375a1.042 1.042 0 0 0-2.084 0v8.333H9.375a1.042 1.042 0 0 0 0 2.084zM5.513 6.987l12.5 12.5 1.474-1.474-12.5-12.5z"
+            />
+        </Svg>
+    );
+};
+
+
+export const ArrowUp = (props) => {
+  return (
+    <Svg width={props.size} height={props.size} fill="none" viewBox="0 0 25 25" {...props}>
+      <Rect
+        width="22.917"
+        height="22.917"
+        x="1.042"
+        y="23.958"
+        stroke={props.color}
+        rx="5.208"
+        strokeWidth="2.083"
+        transform="rotate(-90 1.042 23.958)"
+      />
+      <Path
+        fill={props.color}
+        d="M19.792 6.25c0-.575-.467-1.042-1.042-1.042H9.375a1.042 1.042 0 1 0 0 2.084h8.333v8.333a1.042 1.042 0 0 0 2.084 0zM6.25 18.75l.737.737 12.5-12.5-.737-.737-.737-.737-12.5 12.5z"
+      />
+    </Svg>
+  );
 };

@@ -4,12 +4,10 @@ import {
     StyleSheet, 
     Text, 
     View,
-    StatusBar,
-    Platform,
     AppState,
     Keyboard
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CustomTextInput from '../components/CustomTextInput';
 import { Link } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
@@ -19,20 +17,18 @@ export default function SignUp() {
     const appState = useRef(AppState.currentState);
 
     useEffect(() => {
-    const sub = AppState.addEventListener("change", nextState => {
-        if (appState.current.match(/inactive|background/) && nextState === "active") {
-            Keyboard.dismiss();
-        }
-        appState.current = nextState;
-    });
+        const sub = AppState.addEventListener("change", nextState => {
+            if (appState.current.match(/inactive|background/) && nextState === "active") {
+                Keyboard.dismiss();
+            }
+            appState.current = nextState;
+        });
 
-    return () => sub.remove();
+        return () => sub.remove();
     }, []);
 
     return (
-        <>
-        <StatusBar style="light" backgroundColor="#00d09e" />
-
+        <SafeAreaProvider>
         <SafeAreaView style={styles.mainContainer}>
             <Text style={styles.textH1}>Create an Account</Text>
 
@@ -69,14 +65,14 @@ export default function SignUp() {
                         </Pressable>
 
                         <Text>Already have an account? 
-                            <Link href='../' asChild><Text> Log In</Text></Link> 
+                            <Link href='../' asChild><Text>Log In</Text></Link> 
                         </Text>
                     </View>
                 </View>
 
             </KeyboardAvoidingView>
         </SafeAreaView>
-        </>
+        </SafeAreaProvider>
   );
 }
 
@@ -86,7 +82,7 @@ const styles = StyleSheet.create({
     },
 
     mainContainer: {
-        
+        flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
         backgroundColor: '#00d09e'

@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import { StyleSheet, Text, View } from "react-native";
+import { ArrowDown, ArrowUp } from "../assets/icons/SvgIcons"
 
 export default function DashboardContent(){
     return(
@@ -8,16 +9,16 @@ export default function DashboardContent(){
             <View style={styles.moneyBalance}>{/* 1st row  (row)*/}
                 <View>
                     <Text style={{fontSize: 12, color: "#000000bf"}}>
-                        <Ionicons name="arrow-up-right-box-outline" size={14} color="black" /> Total Balance
+                        <ArrowUp size={12} color="black" /> Total Balance
                     </Text>
-                    <Text style={{fontWeight: "bold", color: "#FFFFFF", fontSize: 20}}>$12,345.67</Text>
+                    <Text style={{fontWeight: "bold", color: "#FFFFFF", fontSize: 20}}>₱12,345.67</Text>
                 </View>
                 <View style={styles.seperator}></View> 
                 <View>
                     <Text style={{fontSize: 12, color: "#000000bf"}}>
-                        <Ionicons name="arrow-down-right-box-outline" size={14} color="black" /> Total Expense
+                        <ArrowDown size={12} color="black" /> Total Expense
                     </Text>
-                    <Text style={{fontWeight: "bold", color: "#0068ff", fontSize: 20}}>-$12,345.67</Text>
+                    <Text style={{fontWeight: "bold", color: "#0068ff", fontSize: 20}}>-₱12,345.67</Text>
                 </View> 
             </View> 
             <View style={styles.balanceProgress}>{/* 2nd row*/}
@@ -25,7 +26,7 @@ export default function DashboardContent(){
                     <Text style={{color: "#FFFFFF", fontSize:11}}>30%</Text>
                 </View>
                 <View style={styles.row2}>
-                    <Text style={{fontSize:11, color: "#000000b9", fontWeight: "bold"}}>$30,000.00</Text>
+                    <Text style={{fontSize:11, color: "#000000b9", fontWeight: "bold"}}>₱30,000.00</Text>
                 </View>
             </View> 
             <View>{/* 3rd row*/}
@@ -48,7 +49,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         width: "75%",
-        marginTop: 12,
     },
 
     seperator: {

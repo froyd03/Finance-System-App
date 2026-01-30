@@ -2,10 +2,14 @@ import { Pressable, FlatList, ScrollView, StyleSheet, Text, View } from "react-n
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import DashboardContent from "../../../components/DashboardContent";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import TemplateCard from "../../../components/TemplateCard"
+import PresetsContent from "../../../components/PresetsContent";
 import { Family, Student, Profile, Foods, Car, Salary } from "@/assets/icons/SvgIcons";
+import { Link } from "expo-router";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 export default function HomeScreen() {
 
@@ -28,27 +32,76 @@ export default function HomeScreen() {
             title: "Everyday Spending",
             budgetDuration: "Daily"
         },
+        {
+            id: 4,
+            icon: <Student size={24} color="#FFF"/>,
+            title: "Student Budget",
+            budgetDuration: "Weekly"
+        },
+        {
+            id:5,
+            icon: <Family size={24} color="#FFF"/>,
+            title: "Family Essentials",
+            budgetDuration: "Monthly"
+        },
+        {
+            id: 6,
+            icon: <Profile size={24} color="#FFF"/>,
+            title: "Everyday Spending",
+            budgetDuration: "Daily"
+        },
+        
+        
     ];
 
+    const headerTabs = ["Dashboard", "Presets"];
+    const [activeTab, setActiveTab] = useState("Dashboard");
+
     return (
-        <SafeAreaView style={styles.body}>
+        <SafeAreaProvider style={styles.body}>
             <View style={styles.dashboard}>
-                <View style={styles.dashboardHeader}>
-                    <View style={styles.txtGreeting}>
-                        <Text style={styles.h2Text}>Hi! Welcome Back</Text>
-                        <Text style={[styles.labelText, {fontSize: 12}]}>Good Morning</Text>  
+                <View style={{flexDirection: "column", gap: 4}}>
+                    <View style={styles.dashboardHeader}>
+                        <View style={styles.txtGreeting}>
+                            <Text style={styles.h2Text}>Hi! Welcome Back</Text>
+                            <Text style={[styles.labelText, {fontSize: 12}]}>Good Morning</Text>  
+                        </View>
+                        <Pressable style={styles.btnNotification}>
+                            <Ionicons name="notifications-outline" size={20} color="black" />
+                        </Pressable>
                     </View>
-                    <Pressable style={styles.btnNotification}>
-                        <Ionicons name="notifications-outline" size={20} color="black" />
-                    </Pressable>
+                    
                 </View>
-                <DashboardContent />
+                
+            <DashboardContent />
             </View>
             <View style={styles.itemContents}>
-
-                <FlatList
+                <View style={styles.headerTab}>
+                    {headerTabs.map(tab => (
+                        <Pressable
+                            key={tab}
+                            onPress={() => setActiveTab(tab)}
+                            style={{
+                                paddingHorizontal: 16,
+                                paddingVertical: 6,
+                                borderRadius: 16,
+                                backgroundColor: activeTab === tab ? "#3299FF" : null,
+                            }}
+                        >
+                            <Text 
+                                style={{
+                                    fontWeight: "500",
+                                    color: activeTab === tab ? "#FFF" : "#000000a2"
+                                }}
+                            >
+                                {tab}
+                            </Text>
+                        </Pressable>
+                    ))}
+                </View>
+                {activeTab === "Dashboard" && <FlatList
                     ListHeaderComponent={
-                        <View style={{ gap: 28 }}>
+                        <View style={{ gap: 26 }}>
                             <View style={styles.monthlyUpdates}>
                                 <View style={{width:"35%", justifyContent: "center", alignItems: "center",}}>
                                     <View style={styles.iconCircle}>
@@ -78,7 +131,7 @@ export default function HomeScreen() {
                                 </View>
                             </View>
                             <View style={styles.templateHeader}>
-                                <Text style={{fontWeight: "500", fontSize: 16}}>
+                                <Text style={{fontWeight: "500", color: "#093030", fontSize: 16}}>
                                     Quick Start Templates
                                 </Text>
                                 <Pressable style={styles.addBtn}>
@@ -91,36 +144,44 @@ export default function HomeScreen() {
                     data={templateData}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => 
-                        <TemplateCard 
-                            icon={item.icon}
-                            title={item.title}
-                            budgetDuration={item.budgetDuration}
-                        />
+                        <Link href={`/home/${item.id}`}>
+                            <TemplateCard 
+                                icon={item.icon}
+                                title={item.title}
+                                budgetDuration={item.budgetDuration}
+                            />
+                        </Link>
                     }
                     showsVerticalScrollIndicator={false}
-                />
-                {/* <FlatList 
-                    ListHeaderComponent={
-                        <Text style={{fontWeight: "500", fontSize: 16}}>
-                            Custom Templates
-                        </Text>
-                    }
-                /> */}
+                />}
+
+                {
+                    (activeTab === "Presets" && true)  
+                    ? 
+                    <PresetsContent /> 
+                    : 
+                    (activeTab !== "Dashboard") 
+                    && 
+                    <Text style={{fontStyle: "italic"}}>No Template Active</Text>
+                }
+                
             </View>
-        </SafeAreaView>
+            
+        </SafeAreaProvider>
     )
 }
 
 const styles = StyleSheet.create({
     body: {
         flexDirection: "column",
-        height: "100%",
+        flex: 1,
         backgroundColor: "#00d09e",
     },
 
     dashboard: {
         height: "32%",
         flexDirection: "column",
+        gap: 22
     },
 
     dashboardHeader: {
@@ -128,7 +189,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 30,
-        paddingVertical: 10,
+        paddingVertical: 4
     },
     
     itemContents: {
@@ -139,7 +200,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "column",
         paddingHorizontal: 20,
-        paddingTop: 12
+        paddingTop: 8,
+        gap: 6
     },
 
     h2Text:{
@@ -158,7 +220,6 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 145,
         borderRadius: 25,
-        marginTop: 15,
         backgroundColor: "#00d09e",
         padding: 20,
         flexDirection: "row",
@@ -198,5 +259,13 @@ const styles = StyleSheet.create({
         flexDirection: "row", 
         alignItems: "center", 
         gap: 12
+    },
+
+    headerTab: { 
+        flexDirection: "row", 
+        width: "100%", 
+        justifyContent: "space-around", 
+        alignSelf: "center", 
+        paddingVertical: 8,
     }
 });

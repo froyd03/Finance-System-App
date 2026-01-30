@@ -1,7 +1,7 @@
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-const Header = ({ navigation, route}) => {
+export default function Header(){
     return (
         <View style={styles.headerContainer}>
             <View>
@@ -14,16 +14,17 @@ const Header = ({ navigation, route}) => {
     )
 }
 
-export default Header;
-
-
 const styles = StyleSheet.create({
     headerContainer: {
+        width: "100%",
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: "#00d09e"
+        backgroundColor: "red",
+        position: "absolute",
+        top: 0,
+        zIndex: 3
     },
   
     titleContainer: {

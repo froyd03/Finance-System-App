@@ -1,7 +1,6 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Ionicons from '@expo/vector-icons/Ionicons';
 import TransactionCard from "../../../components/TransactionCard";
 import { 
     Groceries, 
@@ -13,7 +12,12 @@ import {
     Savings,
     Medicine,
     Entertainment,
+    ArrowUp,
+    ArrowDown
 } from "@/assets/icons/SvgIcons";
+import Header from '../../../components/Header';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 const transactions = () => {
 
@@ -141,12 +145,13 @@ const transactions = () => {
     }
 
     return (
-        <SafeAreaView style={styles.body}>
+        <SafeAreaProvider style={styles.body}>
+            <Header />
             <View style={styles.headerDashboard}>
                 <View style={styles.dashboardContent}>
                     <View style={styles.totalBalance}>
                         <Text style={{fontWeight: "500"}}>Total Balance</Text>
-                        <Text style={{fontWeight: "500", fontSize: 18}}>$7,890.00</Text>
+                        <Text style={{fontWeight: "500", fontSize: 18}}>₱7,890.00</Text>
                     </View>
                     <View style={styles.incomeExpense}>
                         <Pressable 
@@ -157,8 +162,7 @@ const transactions = () => {
                             ]}
                             onPressOut={() => handleBtnPress(0)}
                         >
-                            <Ionicons 
-                                name="arrow-up-right-box-outline" 
+                            <ArrowUp 
                                 size={20} 
                                 color={isBtnActive[0] ? "#FFF":"#00d09e"} 
                             />
@@ -175,7 +179,7 @@ const transactions = () => {
                                     fontWeight: "500",
                                     color: isBtnActive[0] ? "#FFF" : "#000"
                                 }}>
-                                $00.00
+                                ₱00.00
                             </Text>
                         </Pressable>
 
@@ -187,8 +191,7 @@ const transactions = () => {
                             ]}
                             onPressOut={() => handleBtnPress(1)}
                         >
-                            <Ionicons 
-                                name="arrow-down-right-box-outline" 
+                            <ArrowDown 
                                 size={20} 
                                 color={isBtnActive[1] ? "#FFF":"#0068ff"} 
                             />
@@ -206,12 +209,13 @@ const transactions = () => {
                                     color: isBtnActive[1] ? "#FFF" : "#0068ff"
                                 }}
                             >
-                                $00.00
+                                ₱00.00
                             </Text>
                         </Pressable>
                     </View>
                 </View>
             </View>
+
             <View style={styles.itemContents}>
                 <FlatList 
                     data={transactionItem}
@@ -232,7 +236,7 @@ const transactions = () => {
                     showsVerticalScrollIndicator={false}         
                 />
             </View>
-        </SafeAreaView>
+        </SafeAreaProvider>
     )
 }
 
@@ -241,7 +245,7 @@ export default transactions
 const styles = StyleSheet.create({
     body: {
         flexDirection: "column",
-        height: "100%",
+        flex: 1,
         backgroundColor: "#00d09e",
     },
 

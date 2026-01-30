@@ -7,20 +7,15 @@ import {
     StatusBar,
     AppState  
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomTextInput from '../components/CustomTextInput';
 import { Link } from 'expo-router';
 import React, { useEffect } from 'react';
-
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Login() {
 
-  
-
     return (
-        <>
-        <StatusBar style="light" backgroundColor="#00d09e" />
-
+        <SafeAreaProvider>
         <SafeAreaView style={styles.mainContainer}>
             <Text style={styles.textH1}>Welcome</Text>
 
@@ -57,7 +52,7 @@ export default function Login() {
             </KeyboardAvoidingView>
 
         </SafeAreaView>
-        </>
+        </SafeAreaProvider>
     );
 }
 

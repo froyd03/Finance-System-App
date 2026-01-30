@@ -1,7 +1,9 @@
 import { Tabs } from "expo-router";
 import Octicons from '@expo/vector-icons/Octicons';
 import { Analysis, Profile, Home, Transaction } from "@/assets/icons/SvgIcons";
-import { StyleSheet, View, StatusBar } from "react-native";
+import { StyleSheet, View, StatusBar, AppState } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect, useRef, useState } from "react";
 
 function TabIcon({ focused, icon }){
 
@@ -18,73 +20,72 @@ function TabIcon({ focused, icon }){
 export default function TabLayout() {
 
     return (
-        <>
-        <StatusBar style="light" backgroundColor="#00d09e" />
-        <Tabs 
-            screenOptions={{
-                tabBarStyle: styles.tabContainer,
-                tabBarItemStyle: styles.tabItems,
-                tabBarIconStyle: styles.tabIcons,
-                tabBarShowLabel: false,
-                headerStyle: { backgroundColor: "#00d09e" },
-                headerShown: false,
-            }}
-        > 
-            <Tabs.Screen 
-                name="home/index" 
-                options={{ 
-                    title: "Home", 
-                    tabBarIcon: ({focused}) => 
-                        <TabIcon focused={focused} 
-                        icon={<Home size={24} color="#000000a2" />} 
-                    /> 
+        <SafeAreaProvider>
+            <StatusBar style="light" backgroundColor="#00d09e" />
+            <Tabs 
+                screenOptions={{
+                    tabBarStyle: styles.tabContainer,
+                    tabBarItemStyle: styles.tabItems,
+                    tabBarIconStyle: styles.tabIcons,
+                    tabBarShowLabel: false,
+                    headerShown: false,
                 }}
-            />
-            <Tabs.Screen 
-                name="analysis/index" 
-                options={{ 
-                    title: "Analysis", 
-                    tabBarIcon: ({focused}) => 
-                        <TabIcon focused={focused} 
-                        icon={<Analysis size={24} color="#000000a2" />} 
-                    />
-                }} 
-            />
-            <Tabs.Screen 
-                name="transaction/index" 
-                options={{ 
-                    title: "Transactions", 
-                    tabBarIcon: ({focused}) => 
-                        <TabIcon focused={focused} 
-                        icon={<Transaction size={24} color="#000000a2" />} 
-                    />
-                }}
-            />
-            <Tabs.Screen 
-                name="categories/index" 
-                options={{ 
-                    title: "Categories",
-                    tabBarIcon: ({focused}) => 
-                        <TabIcon focused={focused} 
-                        icon={<Octicons name="stack" size={24} color="#000000a2" />} 
-                    />
-                }}
-            />
-        
-            <Tabs.Screen 
-                name="profile/index" 
-                options={{ 
-                    title: "Profile",
-                    tabBarIcon: ({focused}) => 
-                        <TabIcon 
-                            focused={focused} 
-                            icon={<Profile size={24} color="#000000a2" />} 
+            > 
+                <Tabs.Screen 
+                    name="home" 
+                    options={{ 
+                        title: "Home", 
+                        tabBarIcon: ({focused}) => 
+                            <TabIcon focused={focused} 
+                            icon={<Home size={24} color="#000000a2" />} 
+                        /> 
+                    }}
+                />
+                <Tabs.Screen 
+                    name="analysis/index" 
+                    options={{ 
+                        title: "Analysis", 
+                        tabBarIcon: ({focused}) => 
+                            <TabIcon focused={focused} 
+                            icon={<Analysis size={24} color="#000000a2" />} 
                         />
-                }}
-            />
+                    }} 
+                />
+                <Tabs.Screen 
+                    name="transaction/index" 
+                    options={{ 
+                        title: "Transactions", 
+                        tabBarIcon: ({focused}) => 
+                            <TabIcon focused={focused} 
+                            icon={<Transaction size={24} color="#000000a2" />} 
+                        />
+                    }}
+                />
+                <Tabs.Screen 
+                    name="categories/index" 
+                    options={{ 
+                        title: "Categories",
+                        tabBarIcon: ({focused}) => 
+                            <TabIcon focused={focused} 
+                            icon={<Octicons name="stack" size={24} color="#000000a2" />} 
+                        />
+                    }}
+                />
             
-        </Tabs>
-        </>
+                <Tabs.Screen 
+                    name="profile/index" 
+                    options={{ 
+                        title: "Profile",
+                        tabBarIcon: ({focused}) => 
+                            <TabIcon 
+                                focused={focused} 
+                                icon={<Profile size={24} color="#000000a2" />} 
+                            />
+                    }}
+                />
+                
+            </Tabs>
+        </SafeAreaProvider>
     );
 }
 
