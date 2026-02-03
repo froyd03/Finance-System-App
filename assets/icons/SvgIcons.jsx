@@ -69,7 +69,7 @@ export const Family = (props) => {
     );
 };
 
-export const Foods = (props) => {
+export const Food = (props) => {
     return (
         <Svg width={props.size} height={props.size} fill="none" viewBox="0 0 18 30" {...props}>
             <Path

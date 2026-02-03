@@ -5,7 +5,8 @@ import DashboardContent from "../../../components/DashboardContent";
 import { BarChart } from "react-native-gifted-charts";
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { ArrowDown, ArrowUp } from "@/assets/icons/SvgIcons"
+import { ArrowDown, ArrowUp } from "@/assets/icons/SvgIcons";
+import Header from "../../../components/Header"
 
 export default function analysis() {
 
@@ -92,8 +93,12 @@ export default function analysis() {
     return (
     <>
       <SafeAreaView style={styles.body}>
+        <Header backButton={true} title="Analysis"/>
+
         <View style={styles.headerDashboard}>
-            <DashboardContent />
+            <View style={{marginTop: 41}}>
+                <DashboardContent />
+            </View>
         </View>
         
         <View style={styles.itemContents}>
@@ -169,8 +174,10 @@ export default function analysis() {
                     </View>
                 </View>
                 
+                
             </ScrollView>
         </View>
+        
       </SafeAreaView>
       </>
     )
@@ -184,7 +191,6 @@ const styles = StyleSheet.create({
 
     headerDashboard: {
         height: "32%",
-        alignItems: "center",
         justifyContent: "center",
     },
     

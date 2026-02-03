@@ -4,13 +4,14 @@ import { Profile } from '@/assets/icons/SvgIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
+import Header from '../../../components/Header';
 
 const profile = () => {
 
   return (
       <SafeAreaProvider style={styles.body}>
             <View style={styles.headerDashboard}>
+                <Header backButton={true} title="Profile"/>
                 <View style={styles.profileContainer}>
                     <View style={styles.pictureContainer}>
                         <Profile size={84} color="#FFF" />

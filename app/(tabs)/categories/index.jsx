@@ -1,79 +1,46 @@
 import { StyleSheet, Pressable, Text, View } from 'react-native'
-import React, { } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import DashboardContent from "../../../components/DashboardContent";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-import { 
-    Groceries, 
-    Foods, 
-    Salary, 
-    Rent, 
-    Gifts, 
-    Transport,
-    Savings,
-    Medicine,
-    Entertainment,
-} from "@/assets/icons/SvgIcons";
+import Header from "../../../components/Header";
+import { Link } from 'expo-router';
+import * as Icons from "@/assets/icons/SvgIcons";
 
 const categories = () => {
 
+    const categoryItem = [
+        "Food", 
+        "Transport", 
+        "Medicine", 
+        "Groceries", 
+        "Rent", 
+        "Gifts", 
+        "Savings", 
+        "Entertainment"
+    ];
+
    return (
         <SafeAreaProvider style={styles.body}>
+            <Header backButton={true} title="Categories"/>
             <View style={styles.headerDashboard}>
+                <View style={{marginTop: 41}}>
                     <DashboardContent />
+                </View>
             </View>
             <View style={styles.itemContents}>
                 <View style={styles.btnCategoryContainer}>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Foods size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Foods</Text>
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Transport size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Transport</Text>
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Medicine size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Medicine</Text>
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Groceries size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Groceries</Text>
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Rent size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Rent</Text>
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Gifts size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Gifts</Text>
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Savings size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Savings</Text>
-                    </View>
-                    <View style={styles.btnContainer}>
-                        <Pressable style={styles.btnCategory}>
-                            <Entertainment size={42} color="#FFF"/>
-                        </Pressable>
-                        <Text style={styles.btnTextLabel}>Entertainment</Text>
-                    </View>
+                    {categoryItem.map((item, index) => {
+                        const IconComponent = Icons[item]
+
+                        return(
+                            <View key={index} style={styles.btnContainer}>
+                                <Link href={`categories/${item}`} style={styles.btnCategory}>
+                                    <IconComponent size={42} color="#FFF"/>
+                                </Link>
+                                <Text style={styles.btnTextLabel}>{item}</Text>
+                            </View>
+                        )
+                    })}
                     <View style={styles.btnContainer}>
                         <Pressable style={styles.btnCategory}>
                             <FontAwesome6 name="add" size={42} color="#FFF"/>

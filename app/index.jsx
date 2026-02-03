@@ -4,12 +4,9 @@ import {
     StyleSheet, 
     Text, 
     View,
-    StatusBar,
-    AppState  
 } from 'react-native'
 import CustomTextInput from '../components/CustomTextInput';
 import { Link } from 'expo-router';
-import React, { useEffect } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Login() {
@@ -83,7 +80,6 @@ const styles = StyleSheet.create({
         marginTop: '18%',
         width: '80%',
         gap: 25
-
     },
 
     labeltxtInputContainer: {
@@ -112,7 +108,7 @@ const styles = StyleSheet.create({
     textInput: {
         height: 48,
         width: '100%',
-        borderRadius: 12,
+        borderRadius: 16,
         paddingHorizontal: 18,
         backgroundColor: '#0000001a'
     },
@@ -121,14 +117,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#00d09e',
         padding: 14,
         width: '60%',
-        borderRadius: 12,
+        borderRadius: 16,
         alignItems: 'center',
         marginTop: 8
     },
 
     secondaryBtn:{
         backgroundColor: '#00d0a025',
-        padding: 14,
+        padding: 16,
         width: '60%',
         borderRadius: 12,
         alignItems: 'center',

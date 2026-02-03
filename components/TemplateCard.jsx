@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         width: "92%",
+        // backgroundColor: "#DFF7E2",
+        // pading: 110
     },
 
     titleContainer: {

@@ -6,10 +6,10 @@ import { useEffect, useRef, useState } from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import TemplateCard from "../../../components/TemplateCard"
 import PresetsContent from "../../../components/PresetsContent";
-import { Family, Student, Profile, Foods, Car, Salary } from "@/assets/icons/SvgIcons";
+import { Family, Student, Profile, Food, Car, Salary } from "@/assets/icons/SvgIcons";
 import { Link } from "expo-router";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
+import Header from "../../../components/Header";
 
 export default function HomeScreen() {
 
@@ -32,26 +32,6 @@ export default function HomeScreen() {
             title: "Everyday Spending",
             budgetDuration: "Daily"
         },
-        {
-            id: 4,
-            icon: <Student size={24} color="#FFF"/>,
-            title: "Student Budget",
-            budgetDuration: "Weekly"
-        },
-        {
-            id:5,
-            icon: <Family size={24} color="#FFF"/>,
-            title: "Family Essentials",
-            budgetDuration: "Monthly"
-        },
-        {
-            id: 6,
-            icon: <Profile size={24} color="#FFF"/>,
-            title: "Everyday Spending",
-            budgetDuration: "Daily"
-        },
-        
-        
     ];
 
     const headerTabs = ["Dashboard", "Presets"];
@@ -59,21 +39,11 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaProvider style={styles.body}>
+            <Header title="Hi! Welcome Back" subText="Good Morning"/>
             <View style={styles.dashboard}>
-                <View style={{flexDirection: "column", gap: 4}}>
-                    <View style={styles.dashboardHeader}>
-                        <View style={styles.txtGreeting}>
-                            <Text style={styles.h2Text}>Hi! Welcome Back</Text>
-                            <Text style={[styles.labelText, {fontSize: 12}]}>Good Morning</Text>  
-                        </View>
-                        <Pressable style={styles.btnNotification}>
-                            <Ionicons name="notifications-outline" size={20} color="black" />
-                        </Pressable>
-                    </View>
-                    
+                <View style={{marginTop: 74}}>
+                    <DashboardContent />
                 </View>
-                
-            <DashboardContent />
             </View>
             <View style={styles.itemContents}>
                 <View style={styles.headerTab}>
@@ -122,7 +92,7 @@ export default function HomeScreen() {
                                     </View>
                                     <View style={{width: "100%", height: 2, backgroundColor: "#FFFF"}}/>
                                     <View style={styles.itemRow}>
-                                        <Foods size={28} color="#000000b0" />
+                                        <Food size={28} color="#000000b0" />
                                         <View>
                                             <Text style={{fontSize: 12}}>Food Last Month</Text>
                                             <Text style={{fontSize: 16, color: "#0068ff", fontWeight: "bold"}}>-$100.00</Text>
@@ -181,7 +151,7 @@ const styles = StyleSheet.create({
     dashboard: {
         height: "32%",
         flexDirection: "column",
-        gap: 22
+        gap: 22,    
     },
 
     dashboardHeader: {
@@ -189,7 +159,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 30,
-        paddingVertical: 4
+        paddingVertical: 4,
     },
     
     itemContents: {

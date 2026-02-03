@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import TransactionCard from "../../../components/TransactionCard";
 import { 
     Groceries, 
-    Foods, 
+    Food, 
     Salary, 
     Rent, 
     Gifts, 
@@ -33,7 +33,7 @@ const transactions = () => {
             id: 1,
             icon: <Salary size={24} color="#FFFFFF" />,
             title: "Salary",
-            date: "12:45 - Jan 1",
+            date: "12:45 - January 1",
             expenseTitle: "Allowance",
             amount: "$1,200.00" 
         },
@@ -41,7 +41,7 @@ const transactions = () => {
             id: 2,
             icon: <Groceries size={24} color="#FFFFFF" />,
             title: "Groceries",
-            date: "12:45 - Jan 5",
+            date: "12:45 - January 5",
             expenseTitle: "Pantry",  
             amount: "-300.00"
         },
@@ -49,7 +49,7 @@ const transactions = () => {
             id: 3,
             icon: <Rent size={24} color="#FFFFFF" />,
             title: "Rent",
-            date: "12:45 - Feb 1",
+            date: "12:45 - Febuary 1",
             expenseTitle: "Rent",  
             amount: "-$600.00"
         },
@@ -57,15 +57,15 @@ const transactions = () => {
             id: 4,
             icon: <Transport size={24} color="#FFFFFF" />,
             title: "Transport",
-            date: "12:45 - Feb 2",
+            date: "12:45 - Febuary 2",
             expenseTitle: "Rent",  
             amount: "-$600.00"
         },
         {  
             id: 5,
-            icon: <Foods size={24} color="#FFFFFF" />,
+            icon: <Food size={24} color="#FFFFFF" />,
             title: "Food",
-            date: "12:45 - Feb 1",
+            date: "12:45 - Febuary 1",
             expenseTitle: "Rent",  
             amount: "-$600.00"
         },
@@ -97,7 +97,7 @@ const transactions = () => {
             id: 9,
             icon: <Gifts size={24} color="#FFFFFF" />,
             title: "Gifts",
-            date: "12:45 - Dec 1",
+            date: "12:45 - December 1",
             expenseTitle: "Pantry",  
             amount: "-300.00"
         },
@@ -105,7 +105,7 @@ const transactions = () => {
             id: 10,
             icon: <Gifts size={24} color="#FFFFFF" />,
             title: "Gifts",
-            date: "12:45 - Dec 1",
+            date: "12:45 - December 1",
             expenseTitle: "Pantry",  
             amount: "-300.00"
         },
@@ -146,7 +146,7 @@ const transactions = () => {
 
     return (
         <SafeAreaProvider style={styles.body}>
-            <Header />
+            <Header backButton={true} title="Transaction"/>
             <View style={styles.headerDashboard}>
                 <View style={styles.dashboardContent}>
                     <View style={styles.totalBalance}>
@@ -268,11 +268,12 @@ const styles = StyleSheet.create({
         width: "85%",
         flexDirection: "column",
         gap: 12,
+        marginTop: 52
     },
 
     totalBalance: {
         width: "100%",
-        paddingVertical: 10,
+        paddingVertical: 8,
         borderRadius: 14,
         backgroundColor: "#FFF",
         alignItems: "center"

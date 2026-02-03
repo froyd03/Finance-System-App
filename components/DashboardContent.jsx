@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         width: "100%",
         gap: 14,
+  
     },
 
     moneyBalance: {

@@ -1,15 +1,11 @@
 import { Button, Image, StyleSheet, Text, View } from 'react-native'
-import { Stack } from 'expo-router'
+import { Stack } from 'expo-router';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function layout (){
-    function LogoTitle(props) {
-        return (
-            <Text>Helooo</Text>
-
-        );
-    }
 
     return (
+        <SafeAreaProvider>
         <Stack
             screenOptions={
                 {headerShown: false}
@@ -19,14 +15,12 @@ export default function layout (){
             <Stack.Screen 
                 name='[id]'
                 options={{
-                    headerShown: true,
                     title: "Customize Template",
-                    headerTitle: props => <LogoTitle {...props} />,
-                    headerRight: () => <Button title="Update count" />,
                 }}
             />
 
         </Stack>
+        </SafeAreaProvider>
     )
 }
 
