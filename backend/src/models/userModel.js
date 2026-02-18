@@ -21,7 +21,6 @@ export async function createAccount({fullName, email, password}){
     }
 }
 
-
 export async function authenticateUser({email, password}){
     try{
 
