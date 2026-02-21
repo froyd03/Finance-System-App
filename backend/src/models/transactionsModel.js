@@ -48,7 +48,9 @@ export async function createTransaction(transaction) {
                 `UPDATE users SET balance = ?, expenses = ? WHERE userId = ?`,
                 [newBalance, newExpenses, userId]
             );
-            
+
+            //if any template is applied start tracking the amount spent in the template_category table 
+            //3. TODO: Update template_category table with new amount spent for the category if transaction is created from a template
         }
 
         await connection.commit();

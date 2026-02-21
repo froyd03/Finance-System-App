@@ -61,6 +61,10 @@ export async function setAsActiveTemplate(templateId) { //patch
     try {
         await connection.beginTransaction();
         
+        //1. TODO: UPDATE users activeTemplate column with a templateId to reference with template table
+
+        //2. TODO: Update template startDate to current date and endDate to startDate + budgetPeriod
+
         await connection.commit();
         return { message: "Template set as active successfully" };
     } catch (error) {
@@ -68,6 +72,8 @@ export async function setAsActiveTemplate(templateId) { //patch
         throw error;
     }
 }
+
+//4. TODO: create a function that will be called when if theres an active temple from user table
 
 export async function createTemplate(template) {
     const connection = await database.getConnection();
