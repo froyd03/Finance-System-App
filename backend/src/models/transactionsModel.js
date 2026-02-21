@@ -48,6 +48,7 @@ export async function createTransaction(transaction) {
                 `UPDATE users SET balance = ?, expenses = ? WHERE userId = ?`,
                 [newBalance, newExpenses, userId]
             );
+            
         }
 
         await connection.commit();
@@ -67,6 +68,8 @@ export async function getTransactions(userId) {
         const query = "SELECT * FROM transactions WHERE userId = ? ORDER BY transactDate DESC";
         const [rows] = await database.execute(query, [userId]);
         return rows;
+
+        //TODO: Format date and amount
     } catch (error) {
         throw new Error("Error fetching transactions: " + error.message);
     }   

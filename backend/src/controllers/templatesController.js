@@ -2,6 +2,19 @@ import express from 'express';
 const router = express.Router();
 import * as TemplateModel from '../models/templatesModel.js';
 
+router.get('/', async (req, res) => {
+    try {
+        const userId = req.query.userId; 
+        const templates = await TemplateModel.getTemplateByUserId(userId);   
+        res.status(200).json(templates);
+
+    } catch (error) {
+        
+        console.error('Error fetching templates:', error);
+        res.status(500).json({ error: 'Failed to fetch templates' });
+    }
+});
+
 router.post('/', async (req, res) => {
     try {
         const template = req.body;
