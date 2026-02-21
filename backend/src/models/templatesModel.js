@@ -12,14 +12,34 @@ export async function getTemplates() {
 }
 
 export async function createTemplate(template) {
+    const connection = await database.getConnection();
 
     try {
-        const { name, description, content } = template;
-        const [result] = await database.query('INSERT INTO templates (name, description, content) VALUES (?, ?, ?)', [name, description, content]);
-        return { id: result.insertId, ...template };
-    } catch (error) {
-        console.error('Error creating template:', error);
-        throw error;
-    }   
+        await connection.beginTransaction();
 
+        const { userId, templateName, budgetPeriod, categories} = template;
+
+        const [result] = await connection.execute(
+            `INSERT INTO templates(userId, name, budgetPeriod) VALUES (?, ?, ?)`, 
+            [userId, templateName, budgetPeriod]
+        );
+
+        for (const category of categories) {
+            await connection.execute(
+                `INSERT INTO templatecategories(templateId, category_name, limit_amount) VALUES (?, ?, ?)`, 
+                [result.insertId, category.name, category.limitAmount]
+            );
+        }
+        console.log('Template created with ID:', result.insertId);
+        await connection.commit();
+        return { id: result.insertId, message: "Template created successfully" };
+
+    } catch (error) {
+        await connection.rollback();
+        return { error: 'Error creating template', details: error.message };
+
+    } finally {
+        connection.release();
+
+    } 
 }

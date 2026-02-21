@@ -2,6 +2,7 @@ CREATE DATABASE finance_app;
 
 CREATE TABLE users(
 	userId INT PRIMARY KEY AUTO_INCREMENT,
+    activeTemplateId INT DEFAULT NULL,
     fullName VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -26,12 +27,17 @@ CREATE TABLE templates(
 	templateId INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     budgetPeriod enum('Daily', 'Weekly', 'Monthly') NOT NULL,
-    isDefault BOOLEAN DEFAULT FALSE,
     startDate DATE,
     endDate DATE,
 
     FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
 );
+
+ALTER TABLE users
+ADD CONSTRAINT fk_active_template
+FOREIGN KEY (activeTemplateId)
+REFERENCES templates(templateId)
+ON DELETE SET NULL;
 
 CREATE TABLE templateCategories(
 	id INT AUTO_INCREMENT PRIMARY KEY,
