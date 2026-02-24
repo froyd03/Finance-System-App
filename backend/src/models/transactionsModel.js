@@ -1,4 +1,5 @@
 import database from "../config/database.js";
+import { isUserHasActiveTemplate } from "./userModel.js";
 
 export async function createTransaction(transaction) {
     const connection = await database.getConnection();
@@ -49,8 +50,12 @@ export async function createTransaction(transaction) {
                 [newBalance, newExpenses, userId]
             );
 
-            //if any template is applied start tracking the amount spent in the template_category table 
             //3. TODO: Update template_category table with new amount spent for the category if transaction is created from a template
+            if(!await isUserHasActiveTemplate(userId)) {
+                //TODO: validate or checks if the transaction category is from the active template, if not then skip updating the amount spent in template_category table
+
+                //TODO: update the amount spent for the category in template_category table
+            }
         }
 
         await connection.commit();

@@ -1,4 +1,5 @@
 import database from '../config/database.js';
+import { isUserHasActiveTemplate } from './userModel.js';
 
 export async function getTemplates(userId) {
     try {
@@ -55,25 +56,60 @@ async function getCategoriesByTemplateId(templateId) {
     }
 }
 
-export async function setAsActiveTemplate(templateId) { //patch
+export async function setAsActiveTemplate(templateId, userId) { //patch
     const connection = await database.getConnection();
 
     try {
         await connection.beginTransaction();
-        
+
+        if(await isUserHasActiveTemplate(userId)) {
+            throw new Error("User already has an active template. Please deactivate the current template before setting a new one.");
+        }
         //1. TODO: UPDATE users activeTemplate column with a templateId to reference with template table
+        await connection.execute( //possible some bugs here
+            `UPDATE users SET activeTemplateId = ? WHERE userId = ?;`, 
+            [templateId, userId]
+        );
+        
+        // determine the budget peiod of the template being set as active
+        const [row] = await connection.execute(
+            `SELECT 
+                templates.budgetPeriod
+            FROM users 
+            JOIN templates ON users.activeTemplateId = templates.templateId
+            WHERE users.userId = ?`,
+            [userId]
+        );
+        const budgetPeriod = row[0].budgetPeriod;
+
+        const date = new Date();
+        if(budgetPeriod === 'Daily') {
+            date.setUTCDate(date.getUTCDate() + 1);
+        } else if (budgetPeriod === 'Weekly') {
+            date.setUTCDate(date.getUTCDate() + 7);
+        } else if (budgetPeriod === 'Monthly') {
+            date.setUTCMonth(date.getUTCMonth() + 1);
+        }
+
+        const endDate = date.toISOString().split('T')[0];
 
         //2. TODO: Update template startDate to current date and endDate to startDate + budgetPeriod
+        await connection.execute(
+            `UPDATE templates SET startDate = CURDATE(), endDate = ? WHERE templateId = ? AND userId = ?`, 
+            [endDate, templateId, userId]
+        );
 
         await connection.commit();
         return { message: "Template set as active successfully" };
+
     } catch (error) {
         await connection.rollback();
-        throw error;
+        return { error: error.message };
+
+    } finally {
+        connection.release();
     }
 }
-
-//4. TODO: create a function that will be called when if theres an active temple from user table
 
 export async function createTemplate(template) {
     const connection = await database.getConnection();
@@ -104,6 +140,5 @@ export async function createTemplate(template) {
 
     } finally {
         connection.release();
-
     } 
 }

@@ -28,5 +28,17 @@ router.post('/', async (req, res) => {
     }
   
 });
+
+router.patch('/set-active', async (req, res) => {
+    try {
+        const { templateId, userId } = req.body;
+        const result = await TemplateModel.setAsActiveTemplate(templateId, userId);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error('Error setting active template:', error);
+        res.status(500).json({ error: 'Failed to set active template' });   
+    }
+});
     
 export default router;

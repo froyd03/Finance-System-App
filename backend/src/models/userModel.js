@@ -49,6 +49,20 @@ export async function authenticateUser({email, password}){
     }
 }
 
+export async function isUserHasActiveTemplate(userId){
+
+    try {
+        const [rows] = await database.query(
+            `SELECT activeTemplateId FROM users WHERE userId = ?`,
+            [userId]
+        );
+        return rows[0].activeTemplateId !== null;
+    } catch (error) {
+        console.error('Error checking active template:', error);
+        throw error;
+    }
+}
+
 // const user = {
 //     "email": "banataofroyd@gmail.com",
 //     "password": "Froydbanatao-03"
