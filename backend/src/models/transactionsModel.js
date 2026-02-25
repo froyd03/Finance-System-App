@@ -51,10 +51,26 @@ export async function createTransaction(transaction) {
             );
 
             //3. TODO: Update template_category table with new amount spent for the category if transaction is created from a template
-            if(!await isUserHasActiveTemplate(userId)) {
-                //TODO: validate or checks if the transaction category is from the active template, if not then skip updating the amount spent in template_category table
+            if(await isUserHasActiveTemplate(userId)) {
+                //TODO: checks if the transaction category is existing from the active template categories
+                const templateCategories = await getUserTemplateCategories(userId);
 
-                //TODO: update the amount spent for the category in template_category table
+                for(const templateCategory of templateCategories) {
+                   if(category === templateCategory.category_name){
+                        // check if amount liimit is not exceeded
+                        const newSpent = parseFloat(templateCategory.spent) + amount;
+
+                        if(newSpent > parseFloat(templateCategory.limit_amount)) {
+                            throw new Error(`Your budget for ${templateCategory.category_name} is exceeded`);
+                        }
+
+                        //TODO: update the amount spent for the category in template_category table
+                        const [updateTemplateCategory] = await connection.execute(
+                            `UPDATE templatecategories SET spent = ? WHERE templateId = ? AND category_name = ?`,
+                            [newSpent, templateCategory.templateId, category]
+                        );
+                    }
+                }
             }
         }
 
@@ -63,10 +79,32 @@ export async function createTransaction(transaction) {
 
     } catch (error) {
         await connection.rollback();
-        return { "error": error.message };
+        return { "Transaction failed! try again, error": error.message };
 
     } finally {
         connection.release();
+    }
+}
+
+export async function getUserTemplateCategories(userId) {
+
+    try {
+        const [rows] = await database.execute(
+            `SELECT 
+                templates.templateId,
+                templatecategories.category_name,
+                templatecategories.limit_amount,
+                templatecategories.spent
+            FROM users 
+            JOIN templates ON users.activeTemplateId = templates.templateId
+            JOIN templatecategories ON templates.templateId = templatecategories.templateId
+            WHERE users.userId = ?`, 
+            [userId]
+        );
+
+        return rows;
+    } catch (error){
+        return { "Error fetching template categories": error.message };
     }
 }
 
@@ -78,6 +116,6 @@ export async function getTransactions(userId) {
 
         //TODO: Format date and amount
     } catch (error) {
-        throw new Error("Error fetching transactions: " + error.message);
+        return { "Error fetching transactions": error.message };
     }   
 }

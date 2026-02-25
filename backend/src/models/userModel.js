@@ -41,11 +41,11 @@ export async function authenticateUser({email, password}){
             else throw new Error("Error login! no token");
             
         }else{
-            return {"response": "email or password incorrect", "status": false}; 
+            return {"response": "Incorrect email or password ", "status": false}; 
         }
 
     }catch(error){
-        return {"response": error.message , "status": false}; 
+        return {"response": "Incorrect email or password ", "status": false}; 
     }
 }
 

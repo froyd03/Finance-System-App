@@ -16,15 +16,13 @@ router.post('/register', async (req, res) => {
 router.post("/login", async (req, res) => {
 
     try{
-
         const user = req.body;
         console.log("password")
         const result = await userModel.authenticateUser(user);
         res.status(200).json(result);
     }
     catch(error){
-
-        res.status(200).json({response: error.message});  
+        res.status(401).json({response: error.message});  
     }
 });
 

@@ -81,7 +81,7 @@ export async function setAsActiveTemplate(templateId, userId) { //patch
             [userId]
         );
         const budgetPeriod = row[0].budgetPeriod;
-
+  
         const date = new Date();
         if(budgetPeriod === 'Daily') {
             date.setUTCDate(date.getUTCDate() + 1);

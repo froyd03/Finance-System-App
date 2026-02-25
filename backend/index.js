@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 const app = express();
 
 import userController from './src/controllers/userController.js';
@@ -6,6 +7,7 @@ import transactionsController from './src/controllers/transactionsController.js'
 import templatesController from './src/controllers/templatesController.js';
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/user', userController);
 app.use('/transactions', transactionsController);
