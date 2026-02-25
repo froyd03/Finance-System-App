@@ -52,6 +52,7 @@ export async function createTransaction(transaction) {
 
             //3. TODO: Update template_category table with new amount spent for the category if transaction is created from a template
             if(await isUserHasActiveTemplate(userId)) {
+                
                 //TODO: checks if the transaction category is existing from the active template categories
                 const templateCategories = await getUserTemplateCategories(userId);
 
