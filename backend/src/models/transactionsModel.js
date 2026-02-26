@@ -117,6 +117,7 @@ export async function getTransactions(userId) {
 
         //TODO: Format date and amount
     } catch (error) {
+        console.error('Error fetching transactions model:', error);
         return { "Error fetching transactions": error.message };
     }   
 }

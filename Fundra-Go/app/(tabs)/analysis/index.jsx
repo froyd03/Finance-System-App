@@ -7,6 +7,9 @@ import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ArrowDown, ArrowUp } from "@/assets/icons/SvgIcons";
 import Header from "../../../components/Header"
+import { transactionsAPI, templatesAPI } from '../../../services/api';
+import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 
 export default function analysis() {
 
@@ -27,10 +30,12 @@ export default function analysis() {
     }
 
     useEffect(() => {
+
         btnRef.current[0].setNativeProps({
             style: {backgroundColor: "#00d09e"},
         });
     }, [])
+
 
     const barData = [
         {
@@ -87,7 +92,7 @@ export default function analysis() {
           frontColor: '#177AD5',
         },
         {value: 30, frontColor: '#ED6665'},
-      ];
+    ];
     
 
     return (
@@ -138,7 +143,7 @@ export default function analysis() {
                     <View style={styles.headerChartContainer}>
                         <Text style={{fontWeight: "500"}}>Income & Expenses</Text>
                         <View style={styles.iconBtn}>
-                            <Pressable style={styles.iconBtnContainer}>
+                            <Pressable onPress={handleSearchBtn} style={styles.iconBtnContainer}>
                                 <Feather name="search" size={18} color="black" />
                             </Pressable>
                             <Pressable style={styles.iconBtnContainer}>

@@ -4,8 +4,21 @@ dotenv.config();
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
-export async function createAccount({fullName, email, password}){
+export async function createAccount(signUpForm){
     try{
+
+        const {fullName, email, password, confirmPassword} = signUpForm;
+
+        for (const key in signUpForm) {
+            if (signUpForm[key] === '') {
+                console.log(key);
+                throw new Error("Please fill in all fields");
+            }
+        }
+
+        if(password !== confirmPassword){
+            throw new Error("Password and Confirm Password do not match");
+        }
 
         const hashPassword = await bcrypt.hash(password, 10);
         await database.query(
@@ -17,7 +30,7 @@ export async function createAccount({fullName, email, password}){
        
     }catch(error){
         if(error.code === "ER_DUP_ENTRY") return {"response": "Email already exist" , "status": false};
-        return {"response": "Something went wrong, try again.", "status": false, "error": error.message}; 
+        return { "response": error.message, "status": false}; 
     }
 }
 

@@ -6,10 +6,37 @@ import {
     View,
 } from 'react-native'
 import CustomTextInput from '../components/CustomTextInput';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { authAPI } from '../services/api.js';
+import { useState, useEffect } from 'react';
+import * as SecureStore from 'expo-secure-store';
 
 export default function Login() {
+    
+    const [loginData, setLoginData] = useState({ email: '', password: ''});
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSubmit = async () => {
+        try {
+            const {data} = await authAPI.login(loginData);
+            setErrorMessage(data.response)
+            console.log(data);
+            if(data.status){
+                //navigate to home page
+                router.replace('/home');
+                setErrorMessage('');
+                await SecureStore.setItemAsync('token', data.response);
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+            setErrorMessage('An error occurred during login.');
+        }
+    }
+
+    useEffect(() => {
+        console.log(loginData);
+    }, [loginData]);
 
     return (
         <SafeAreaProvider>
@@ -20,21 +47,26 @@ export default function Login() {
                 <View style={styles.inputContainer}>
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Username or Email</Text>
-                        <CustomTextInput placeholder="example@gmail.com" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            onChangeText={(text) => setLoginData({...loginData, email: text})} 
+                            placeholder="example@gmail.com" 
+                            TextInputStyle={styles.textInput}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Password</Text>
-                        <CustomTextInput secureTextEntry placeholder="••••••••••" TextInputStyle={styles.textInput}/>
-                        <Text>Forgot password?</Text>
+                        <CustomTextInput 
+                            secureTextEntry 
+                            onChangeText={(text) => setLoginData({...loginData, password: text})} 
+                            placeholder="••••••••••" TextInputStyle={styles.textInput}/>
+                        <Text style={styles.txtForgotPass}>Forgot password?</Text>
+                        {errorMessage && <Text style={styles.txtError}>{errorMessage}</Text>}
                     </View>
-
                     <View style={styles.btnContainer}>
-                        <Link href="home" asChild>
-                            <Pressable style={styles.mainBtn}>
-                                <Text style={styles.btnTxt}>Log In</Text>
-                            </Pressable>
-                        </Link>
+                        <Pressable onPress={handleSubmit} style={styles.mainBtn}>
+                            <Text style={styles.btnTxt}>Log In</Text>
+                        </Pressable>
 
                         <Text style={styles.label}>or</Text>
                         
@@ -45,9 +77,7 @@ export default function Login() {
                         </Link>
                     </View>
                 </View>
-
             </KeyboardAvoidingView>
-
         </SafeAreaView>
         </SafeAreaProvider>
     );
@@ -79,18 +109,17 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         marginTop: '18%',
         width: '80%',
-        gap: 25
+        gap: 20
     },
 
     labeltxtInputContainer: {
-        gap: 10
+        gap: 8
     },
 
     btnContainer: {
         width: '100%',
-        marginTop: '8%',
         alignItems: 'center',
-        gap: 10
+        gap: 8
     },
 
     label: {
@@ -119,7 +148,6 @@ const styles = StyleSheet.create({
         width: '60%',
         borderRadius: 16,
         alignItems: 'center',
-        marginTop: 8
     },
 
     secondaryBtn:{
@@ -142,5 +170,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         color: '#0000009f',
     },
+
+    txtError: {
+        color: 'red',
+        textAlign: 'center',
+        width: '100%',
+    }
 
 })

@@ -9,8 +9,10 @@ import {
 } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CustomTextInput from '../components/CustomTextInput';
-import { Link } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import { Link, router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { authAPI } from '../services/api.js';
+import * as SecureStore from 'expo-secure-store';
 
 export default function SignUp() {
 
@@ -27,6 +29,37 @@ export default function SignUp() {
         return () => sub.remove();
     }, []);
 
+    const [signUpForm, setSignUpForm] = useState({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    const handleInputChange = (value) => {
+        setSignUpForm(prevState => ({...prevState, ...value}));
+        setErrorMessage('');
+        console.log(signUpForm);
+    };
+
+    const [ errorMessage, setErrorMessage] = useState('');
+
+    const handleSubmit = async () => {
+        try {
+            const {data} = await authAPI.register(signUpForm);
+            setErrorMessage(data.response)
+            console.log(data);
+            if(data.status){
+                //navigate to home page
+                router.replace('/home');
+                setErrorMessage('');
+                await SecureStore.setItemAsync('token', data.response);
+            }
+        } catch (error) {
+            setErrorMessage('An error occurred during registration. error: ' + error.message);
+        }
+    }
+
     return (
         <SafeAreaProvider>
         <SafeAreaView style={styles.mainContainer}>
@@ -41,27 +74,45 @@ export default function SignUp() {
                 <View style={styles.inputContainer}>
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Full Name</Text>
-                        <CustomTextInput placeholder="John Reyes Doe" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            onChangeText={(value) => handleInputChange({fullName: value})}
+                            placeholder="John Reyes Doe" 
+                            TextInputStyle={styles.textInput}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Email</Text>
-                        <CustomTextInput placeholder="example@example.com" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            onChangeText={(value) => handleInputChange({email: value})}
+                            placeholder="example@example.com" 
+                            TextInputStyle={styles.textInput}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Password</Text>
-                        <CustomTextInput secureTextEntry placeholder="••••••••••" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            secureTextEntry 
+                            onChangeText={(value) => handleInputChange({password: value})} 
+                            placeholder="••••••••••" 
+                            TextInputStyle={styles.textInput}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Confirm Password</Text>
-                        <CustomTextInput secureTextEntry placeholder="••••••••••" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            secureTextEntry 
+                            onChangeText={(value) => handleInputChange({confirmPassword: value})} 
+                            placeholder="••••••••••" 
+                            TextInputStyle={styles.textInput}
+                        />
                     </View>
-
+                    <Text style={styles.txtError}>{errorMessage}</Text>
                     <View style={styles.btnContainer}>
-                        <Pressable style={styles.mainBtn}>
-                            <Text style={styles.btnTxt}>Sign Up</Text>
+                        <Pressable onPress={handleSubmit} style={styles.mainBtn}>
+                            <Text  style={styles.btnTxt}>Sign Up</Text>
                         </Pressable>
 
                         <Text>Already have an account? 
@@ -111,7 +162,6 @@ const styles = StyleSheet.create({
 
     btnContainer: {
         width: '100%',
-        marginTop: '8%',
         alignItems: 'center',
         gap: 20
     },
@@ -165,5 +215,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         color: '#0000009f',
     },
+
+    txtError: {
+        color: 'red',
+        textAlign: 'center',
+        width: '100%',
+    }
 
 })

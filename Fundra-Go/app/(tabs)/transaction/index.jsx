@@ -28,6 +28,20 @@ const transactions = () => {
         setBtnActive((prev) => prev.map((_, index) => btnIndex == index ? true : false))
     }
 
+    // useEffect(() => {
+    //     const fetchTransactions = async () => {
+    //         try {
+    //             const {data} = await transactionsAPI.getTransactions({userId: 8});
+    //             console.log(data);
+    //         } catch (error) {
+    //             console.error('Failed to fetch transactions:', error);
+    //         }
+    //     }
+
+    //     fetchTransactions();
+       
+    // }, [])
+
     const transactionItem = [
         {
             id: 1,
