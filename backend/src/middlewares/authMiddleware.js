@@ -14,6 +14,7 @@ export default function authMiddleware(req, res, next) {
         console.log('Decoded token:', decoded);
         next();
     } catch (err) {
+        console.error('error from auth middleware', err)
         return res.status(403).json({ message: "Invalid token" });
     }
 }

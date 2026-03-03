@@ -27,7 +27,7 @@ export default function TransactionCard(props) {
             </View>
             
             <View style={styles.amount}>
-                <Text style={{fontSize: 14, color: "#000000b7", fontWeight: "bold"}}>{props.amount}</Text>
+                <Text style={{fontSize: 14, color: "#000000b7", fontWeight: "bold"}}>₱{props.amount}</Text>
             </View>
         </View> 
     )

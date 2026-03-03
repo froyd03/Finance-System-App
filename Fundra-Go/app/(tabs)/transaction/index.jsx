@@ -2,22 +2,10 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TransactionCard from "../../../components/TransactionCard";
-import { 
-    Groceries, 
-    Food, 
-    Salary, 
-    Rent, 
-    Gifts, 
-    Transport,
-    Savings,
-    Medicine,
-    Entertainment,
-    ArrowUp,
-    ArrowDown
-} from "@/assets/icons/SvgIcons";
+import * as Icons from "@/assets/icons/SvgIcons";
 import Header from '../../../components/Header';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
+import { transactionsAPI } from '../../../services/api';
 
 const transactions = () => {
 
@@ -28,114 +16,32 @@ const transactions = () => {
         setBtnActive((prev) => prev.map((_, index) => btnIndex == index ? true : false))
     }
 
-    // useEffect(() => {
-    //     const fetchTransactions = async () => {
-    //         try {
-    //             const {data} = await transactionsAPI.getTransactions({userId: 8});
-    //             console.log(data);
-    //         } catch (error) {
-    //             console.error('Failed to fetch transactions:', error);
-    //         }
-    //     }
-
-    //     fetchTransactions();
-       
-    // }, [])
-
-    const transactionItem = [
-        {
-            id: 1,
-            icon: <Salary size={24} color="#FFFFFF" />,
-            title: "Salary",
-            date: "12:45 - January 1",
-            expenseTitle: "Allowance",
-            amount: "$1,200.00" 
-        },
-        {
-            id: 2,
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - January 5",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {  
-            id: 3,
-            icon: <Rent size={24} color="#FFFFFF" />,
-            title: "Rent",
-            date: "12:45 - Febuary 1",
-            expenseTitle: "Rent",  
-            amount: "-$600.00"
-        },
-        {  
-            id: 4,
-            icon: <Transport size={24} color="#FFFFFF" />,
-            title: "Transport",
-            date: "12:45 - Febuary 2",
-            expenseTitle: "Rent",  
-            amount: "-$600.00"
-        },
-        {  
-            id: 5,
-            icon: <Food size={24} color="#FFFFFF" />,
-            title: "Food",
-            date: "12:45 - Febuary 1",
-            expenseTitle: "Rent",  
-            amount: "-$600.00"
-        },
-        {
-            id: 6,
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - Jun 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            id: 7,
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - Jun 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            id: 8,
-            icon: <Gifts size={24} color="#FFFFFF" />,
-            title: "Gifts",
-            date: "12:45 - Jun 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            id: 9,
-            icon: <Gifts size={24} color="#FFFFFF" />,
-            title: "Gifts",
-            date: "12:45 - December 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            id: 10,
-            icon: <Gifts size={24} color="#FFFFFF" />,
-            title: "Gifts",
-            date: "12:45 - December 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-    ]
+    const [transactions, setTransactions] = useState([]);
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            try {
+                const {data} = await transactionsAPI.getTransactions();
+                setTransactions(data);
+                
+            } catch (error) {
+                console.log('Failed to fetch transactions:', error);
+            }
+        }
+        
+        fetchTransactions();
+    }, [])
 
     const MonthSeperator = ({ dateTime, index }) => {
         const month = dateTime.split(" ")[2];
-        const transacMonth = transactionItem.length < index || index !== 1
+        const transacMonth = transactions.length < index || index !== 0
             ? 
-            transactionItem[index-2].date.split(" ")[2] 
+            dateFormater(transactions[index-1].transactDate).split(" ")[2] 
             : 
-            transactionItem[index-1].date.split(" ")[2];
+            dateFormater(transactions[index].transactDate).split(" ")[2];
 
         let isMonthDisplay = true;
 
-        if(index === 1){
+        if(index === 0){
             isMonthDisplay = true
         }else if(month === transacMonth){
             isMonthDisplay = false
@@ -147,7 +53,6 @@ const transactions = () => {
             <View style={{
                 marginTop: isMonthDisplay ? 18 : 0,
                 marginBottom: isMonthDisplay ? 14 : 0
-
             }}>
                 {isMonthDisplay && 
                     <Text style={{fontWeight: "500", color: "#000000b7"}}>
@@ -156,6 +61,19 @@ const transactions = () => {
                 }
             </View>
         )
+    }
+
+    const dateFormater = (dateTime) => {
+        const formatted = new Date(dateTime).toLocaleString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            month: "short",
+            day: "numeric",
+            timeZone: "Asia/Manila"
+        }).split(', ');
+
+        return formatted[1]+ ' - ' + formatted[0];
     }
 
     return (
@@ -176,7 +94,7 @@ const transactions = () => {
                             ]}
                             onPressOut={() => handleBtnPress(0)}
                         >
-                            <ArrowUp 
+                            <Icons.ArrowUp 
                                 size={20} 
                                 color={isBtnActive[0] ? "#FFF":"#00d09e"} 
                             />
@@ -205,7 +123,7 @@ const transactions = () => {
                             ]}
                             onPressOut={() => handleBtnPress(1)}
                         >
-                            <ArrowDown 
+                            <Icons.ArrowDown 
                                 size={20} 
                                 color={isBtnActive[1] ? "#FFF":"#0068ff"} 
                             />
@@ -232,21 +150,24 @@ const transactions = () => {
 
             <View style={styles.itemContents}>
                 <FlatList 
-                    data={transactionItem}
+                    data={transactions}
                     contentContainerStyle={styles.itemContainer}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item}) => 
-                        <>
-                            <MonthSeperator index={item.id} dateTime={item.date}/>
+                    keyExtractor={(item) => item.transactionId.toString()}
+                    renderItem={({item, index}) => {
+                        const IconComponent = Icons[item.category];
+                        return(
+                            <>
+                            <MonthSeperator index={index} dateTime={dateFormater(item.transactDate)}/>
                             <TransactionCard 
-                                icon={item.icon}
-                                title={item.title}
-                                date={item.date}
+                                icon={<IconComponent size={24} color="#FFF"/>}
+                                title={item.category}
+                                date={dateFormater(item.transactDate)}
                                 expenseTitle={item.expenseTitle}
                                 amount={item.amount}
                             />
-                        </>
-                    }  
+                            </>
+                        )
+                    }}
                     showsVerticalScrollIndicator={false}         
                 />
             </View>

@@ -1,14 +1,33 @@
 import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
-import React from 'react'
-import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from '../../../components/Header';
-import DashboardContent from "../../../components/DashboardContent";
 import CustomTextInput from "../../../components/CustomTextInput";
+import { transactionsAPI } from '../../../services/api';
 
 export default function addExpense() {
 
-    const { category } = useLocalSearchParams();
+    const [isFocus, setFocus] = useState(false);
+
+    const [expenseForm, setExpenseForm] = useState({
+        category: '',
+        amount: '',
+        expenseTitle: '',
+        message: ''
+    });
+
+    const [responseMessage, setResponseMessage] = useState("");
+    const handleSubmitForm = async () => {
+        try{ 
+            const {data} = await transactionsAPI.createTransaction(expenseForm)
+
+            if(data.message === "Transaction created successfully"){
+                setResponseMessage(data.message);
+            }
+        } catch(error) {
+            setResponseMessage(error);
+        }
+    }
     
     return (
         <SafeAreaProvider style={styles.body}>
@@ -17,25 +36,36 @@ export default function addExpense() {
 
             </View>
             <ScrollView contentContainerStyle={{alignItems: "center", gap: 32, paddingBottom: 28,}} style={styles.itemContents}>
+                
                 <View style={styles.inputContainer}>
-                    <View style={styles.labeltxtInputContainer}>
-                        <Text style={styles.label}>Date</Text>
-                        <CustomTextInput placeholder="April 30, 2026" TextInputStyle={styles.textInput}/>
-                    </View>
-
+                    {responseMessage && <Text>{responseMessage}</Text>} 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Category</Text>
-                        <CustomTextInput placeholder="Food" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            onFocus={() => setFocus(true)} 
+                            onBlur={() => setFocus(false)} 
+                            placeholder="Food" 
+                            TextInputStyle={styles.textInput}
+                            onChangeText={(value) => setExpenseForm({ ...expenseForm, category: value})}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Amount</Text>
-                        <CustomTextInput placeholder="₱0.00" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            placeholder="₱0.00" 
+                            TextInputStyle={styles.textInput}
+                            onChangeText={(value) => setExpenseForm({ ...expenseForm, amount: value})}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Expense Title</Text>
-                        <CustomTextInput placeholder="Dinner" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            placeholder="Dinner" 
+                            TextInputStyle={styles.textInput}
+                            onChangeText={(value) => setExpenseForm({ ...expenseForm, expenseTitle: value})}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
@@ -44,12 +74,13 @@ export default function addExpense() {
                             multiline={true} 
                             placeholder="Enter message"
                             TextInputStyle={[styles.textInput, {height: 120}]}
+                            onChangeText={(value) => setExpenseForm({...expenseForm, message: value})}
                         />
                     </View>
                 </View>
                 
                 <View style={styles.actionBtn}>
-                    <Pressable style={styles.mainBtn}>
+                    <Pressable onPress={handleSubmitForm} style={styles.mainBtn}>
                         <Text style={styles.btnTxt}>Save Changes</Text>
                     </Pressable>
                 </View>

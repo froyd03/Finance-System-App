@@ -21,7 +21,7 @@ export default function Login() {
         try {
             const {data} = await authAPI.login(loginData);
             setErrorMessage(data.response)
-            console.log(data);
+
             if(data.status){
                 //navigate to home page
                 router.replace('/home');
@@ -35,8 +35,15 @@ export default function Login() {
     }
 
     useEffect(() => {
-        console.log(loginData);
-    }, [loginData]);
+        const redirectIfHasToken = async () => {
+            const token = await SecureStore.getItemAsync('token');
+
+            if(token){
+                router.replace('/home');
+            }
+        }
+        redirectIfHasToken();
+    }, []);
 
     return (
         <SafeAreaProvider>

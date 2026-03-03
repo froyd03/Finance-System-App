@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import {router} from 'expo-router'
 
 const API = axios.create({baseURL: 'http://192.168.1.2:5000'});
 
@@ -16,15 +17,34 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+API.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      const message = error.response.data.message;
+
+      if (message === "No token") {
+        alert("Session expired. Please log in again.");
+      } else if (message === "Invalid token") {
+        alert("Invalid session. Please log in again.");
+      } 
+      
+      await SecureStore.deleteItemAsync('token');
+      router.replace('/')
+    }
+    return Promise.reject(error);
+  }
+)
+
 export const authAPI = {
-    login: (data) => API.post('/user/login', data),
-    register: (data) => API.post('/user/register', data),
+    login: (data) => API.post('/user/login', data),//
+    register: (data) => API.post('/user/register', data),//
 }
 
 export const transactionsAPI = {
-    createTransaction: (data) => API.post('/transactions', data),
-    getTransactions: () => API.get(`/transactions`),
-    getTemplateCategories: (userId) => API.get(`/transactions/getUserTemplateCategories/?userId=${userId}`),
+    createTransaction: (data) => API.post('/transactions', data),//  
+    getTransactions: () => API.get(`/transactions`),//
+    getTransactionByCategory: (category) => API.get(`/transactions/getTransactionByCategory/?category=${category}`)//
 }
 
 export const templatesAPI = {

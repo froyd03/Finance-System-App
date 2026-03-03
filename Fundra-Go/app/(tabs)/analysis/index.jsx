@@ -143,7 +143,7 @@ export default function analysis() {
                     <View style={styles.headerChartContainer}>
                         <Text style={{fontWeight: "500"}}>Income & Expenses</Text>
                         <View style={styles.iconBtn}>
-                            <Pressable onPress={handleSearchBtn} style={styles.iconBtnContainer}>
+                            <Pressable style={styles.iconBtnContainer}>
                                 <Feather name="search" size={18} color="black" />
                             </Pressable>
                             <Pressable style={styles.iconBtnContainer}>

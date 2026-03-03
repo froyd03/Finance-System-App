@@ -1,27 +1,25 @@
 import database from "../config/database.js";
 import { isUserHasActiveTemplate } from "./userModel.js";
 
-export async function createTransaction(transaction) {
+export async function createTransaction(transaction, userId) {
     const connection = await database.getConnection();
 
     try {
         await connection.beginTransaction();
 
         const { 
-            transactDate, 
             category, 
             amount, 
             expenseTitle, 
             message,
-            userId
         } = transaction;
 
         const [addTransaction] = await connection.execute(
             `INSERT INTO transactions(
-                userId, transactDate, category, amount, expenseTitle, message
+                userId, category, amount, expenseTitle, message
             ) 
-            VALUES (?, ?, ?, ?, ?, ?)`, 
-            [userId, transactDate, category, amount, expenseTitle, message]
+            VALUES (?, ?, ?, ?, ?)`, 
+            [userId, category, amount, expenseTitle, message]
         );
 
         const [getUserBalance] = await connection.execute(
@@ -30,20 +28,21 @@ export async function createTransaction(transaction) {
         );
         const currentBalance = parseFloat(getUserBalance[0].balance);
         const currentExpenses = parseFloat(getUserBalance[0].expenses);
+        const floatAmount = parseFloat(amount)
 
-        if(category === "Money") {
-            const newBalance = currentBalance + amount;
+        if(category === "Income") {
+            const newBalance = currentBalance + floatAmount;
 
             const [updateUserBalance] = await connection.execute(
                 `UPDATE users SET balance = ? WHERE userId = ?`,
                 [newBalance, userId]
             );
-        }else if(amount > currentBalance){
+        }else if(floatAmount > currentBalance){
             throw new Error("Insufficient funds");
 
         }else{
-            const newBalance = currentBalance - amount;
-            const newExpenses = currentExpenses + amount;
+            const newBalance = currentBalance - floatAmount;
+            const newExpenses = currentExpenses + floatAmount;
 
             const [updateUserBalance] = await connection.execute(
                 `UPDATE users SET balance = ?, expenses = ? WHERE userId = ?`,
@@ -59,7 +58,7 @@ export async function createTransaction(transaction) {
                 for(const templateCategory of templateCategories) {
                    if(category === templateCategory.category_name){
                         // check if amount liimit is not exceeded
-                        const newSpent = parseFloat(templateCategory.spent) + amount;
+                        const newSpent = parseFloat(templateCategory.spent) + floatAmount;
 
                         if(newSpent > parseFloat(templateCategory.limit_amount)) {
                             throw new Error(`Your budget for ${templateCategory.category_name} is exceeded`);
@@ -87,7 +86,7 @@ export async function createTransaction(transaction) {
     }
 }
 
-export async function getUserTemplateCategories(userId) {
+async function getUserTemplateCategories(userId) {
 
     try {
         const [rows] = await database.execute(
@@ -109,9 +108,26 @@ export async function getUserTemplateCategories(userId) {
     }
 }
 
+export async function getTransactionByCategory(category, userId) {
+    try {
+
+        const [transactionCategory] = await database.execute(
+            `SELECT * FROM transactions 
+            WHERE category = ? AND userId = ?
+            ORDER BY transactDate DESC`,
+            [category, userId]
+        );
+
+        return transactionCategory;
+    } catch(error) {
+        return { "message": error };
+    }
+}
+
 export async function getTransactions(userId) {
     try {
         const query = "SELECT * FROM transactions WHERE userId = ? ORDER BY transactDate DESC";
+        console.log(userId)
         const [rows] = await database.execute(query, [userId]);
         return rows;
 

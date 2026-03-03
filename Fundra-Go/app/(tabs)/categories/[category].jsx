@@ -4,107 +4,22 @@ import Header from "../../../components/Header";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import DashboardContent from "@/components/DashboardContent";
 import TransactionCard from "../../../components/TransactionCard";
-import { 
-    Groceries, 
-    Food, 
-    Salary, 
-    Rent, 
-    Gifts, 
-    Transport,
-    Savings,
-    Medicine,
-    Entertainment,
-    ArrowUp,
-    ArrowDown
-} from "@/assets/icons/SvgIcons";
+import * as Icons from "@/assets/icons/SvgIcons";
 import { useEffect, useState } from "react";
+import { transactionsAPI } from "../../../services/api";
 
 export default function Category(){
 
     const { category } = useLocalSearchParams();
-
-    const transactionItem = [
-        {
-            icon: <Salary size={24} color="#FFFFFF" />,
-            title: "Salary",
-            date: "12:45 - January 1",
-            expenseTitle: "Allowance",
-            amount: "1,200.00" 
-        },
-        {
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - January 5",
-            expenseTitle: "Canned Food",  
-            amount: "-300.00"
-        },
-        {  
-            icon: <Rent size={24} color="#FFFFFF" />,
-            title: "Rent",
-            date: "12:45 - Febuary 1",
-            expenseTitle: "Rent",  
-            amount: "-$600.00"
-        },
-        {  
-            icon: <Transport size={24} color="#FFFFFF" />,
-            title: "Transport",
-            date: "12:45 - Febuary 2",
-            expenseTitle: "New Tires",  
-            amount: "-$600.00"
-        },
-        {  
-            icon: <Food size={24} color="#FFFFFF" />,
-            title: "Food",
-            date: "12:45 - Febuary 1",
-            expenseTitle: "Lunch",  
-            amount: "-$600.00"
-        },
-        {
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - Jun 1",
-            expenseTitle: "Veggies",  
-            amount: "-300.00"
-        },
-        {
-            icon: <Groceries size={24} color="#FFFFFF" />,
-            title: "Groceries",
-            date: "12:45 - Jun 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            icon: <Gifts size={24} color="#FFFFFF" />,
-            title: "Gifts",
-            date: "12:45 - Jun 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            icon: <Gifts size={24} color="#FFFFFF" />,
-            title: "Gifts",
-            date: "12:45 - December 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-        {
-            id: 10,
-            icon: <Gifts size={24} color="#FFFFFF" />,
-            title: "Gifts",
-            date: "12:45 - December 1",
-            expenseTitle: "Pantry",  
-            amount: "-300.00"
-        },
-    ]
 
     const MonthSeperator = ({ dateTime, index }) => {
         
         const month = dateTime.split(" ")[2];
         const transacMonth = transactionByCategory.length < index || index !== 0
             ? 
-            transactionByCategory[index-1]?.date.split(" ")[2] 
+            dateFormater(transactionByCategory[index-1].transactDate).split(" ")[2] 
             : 
-            transactionByCategory[index]?.date.split(" ")[2];
+            dateFormater(transactionByCategory[index].transactDate).split(" ")[2];
 
         let isMonthDisplay = true;
 
@@ -131,9 +46,32 @@ export default function Category(){
         )
     }
 
+    const dateFormater = (dateTime) => {
+        const formatted = new Date(dateTime).toLocaleString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            month: "short",
+            day: "numeric",
+            timeZone: "Asia/Manila"
+        }).split(', ');
+
+        return formatted[1]+ ' - ' + formatted[0];
+    } 
+
     const [transactionByCategory, setTransaction]= useState([]);
     useEffect(() => {
-        setTransaction(transactionItem.filter((item) => item.title === category))
+        const fetchTransactionByCategory = async () => {
+            try {
+                const {data} = await transactionsAPI.getTransactionByCategory(category);
+                console.log(data);
+                setTransaction(data);
+            } catch(error) {
+                console.log("fetch category error:", error.response.data)
+            }
+        } 
+
+        fetchTransactionByCategory();
     }, []);
     
     return(
@@ -149,24 +87,26 @@ export default function Category(){
                     data={transactionByCategory}
                     contentContainerStyle={styles.itemContainer}
                     keyExtractor={(_, index) => index.toString()}
-                    renderItem={({item, index}) => 
-                        <>
-                            <MonthSeperator index={index} dateTime={item.date}/>
+                    renderItem={({item, index}) => {
+                        const Icon = Icons[item.category];
+                        return(<>
+                            <MonthSeperator index={index} dateTime={dateFormater(item.transactDate)}/>
                             <View style={styles.cardContainer}>
                                 <View style={styles.titleContainer}>
                                     <View style={styles.iconContainer}>
-                                        {item.icon}
+                                        <Icon size={24} color="#FFF"/>
                                     </View>
                                     <View style={{justifyContent: "center", gap: 4}}>
                                         <Text style={{fontSize: 15, color: "#000000b7", fontWeight: "bold"}}>{item.expenseTitle}</Text>
-                                        <Text style={{fontSize: 12, color: "#0068FF", fontWeight: "bold"}}>{item.date}</Text>
+                                        <Text style={{fontSize: 12, color: "#0068FF", fontWeight: "bold"}}>{dateFormater(item.transactDate)}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.amount}>
                                     <Text style={{fontSize: 14, color: "#0068FF", fontWeight: "bold"}}>₱{item.amount}</Text>
                                 </View>
                             </View>
-                        </> 
+                        </>)
+                        }
                     }  
                     showsVerticalScrollIndicator={false}         
                 />
