@@ -147,14 +147,13 @@ const transactions = () => {
                     </View>
                 </View>
             </View>
-
             <View style={styles.itemContents}>
                 <FlatList 
                     data={transactions}
                     contentContainerStyle={styles.itemContainer}
                     keyExtractor={(item) => item.transactionId.toString()}
                     renderItem={({item, index}) => {
-                        const IconComponent = Icons[item.category];
+                        const IconComponent = Icons[item.category] || Icons["More"];
                         return(
                             <>
                             <MonthSeperator index={index} dateTime={dateFormater(item.transactDate)}/>

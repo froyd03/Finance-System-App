@@ -18,14 +18,24 @@ export default function addExpense() {
 
     const [responseMessage, setResponseMessage] = useState("");
     const handleSubmitForm = async () => {
+        console.log(expenseForm)
+
         try{ 
             const {data} = await transactionsAPI.createTransaction(expenseForm)
-
+            console.log(data)
             if(data.message === "Transaction created successfully"){
-                setResponseMessage(data.message);
+                
+                setExpenseForm({
+                    category: '',
+                    amount: '',
+                    expenseTitle: '',
+                    message: ''
+                });
             }
+            setResponseMessage(data.message);
         } catch(error) {
             setResponseMessage(error);
+            console.log(error)
         }
     }
     
@@ -38,7 +48,11 @@ export default function addExpense() {
             <ScrollView contentContainerStyle={{alignItems: "center", gap: 32, paddingBottom: 28,}} style={styles.itemContents}>
                 
                 <View style={styles.inputContainer}>
-                    {responseMessage && <Text>{responseMessage}</Text>} 
+                    {responseMessage &&
+                        <View style={styles.txtResponseContainer}>
+                            <Text style={styles.txtResponse}>{responseMessage}</Text>
+                        </View>
+                    } 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Category</Text>
                         <CustomTextInput 
@@ -47,6 +61,7 @@ export default function addExpense() {
                             placeholder="Food" 
                             TextInputStyle={styles.textInput}
                             onChangeText={(value) => setExpenseForm({ ...expenseForm, category: value})}
+                            value={expenseForm.category}
                         />
                     </View>
 
@@ -56,6 +71,7 @@ export default function addExpense() {
                             placeholder="₱0.00" 
                             TextInputStyle={styles.textInput}
                             onChangeText={(value) => setExpenseForm({ ...expenseForm, amount: value})}
+                            value={expenseForm.amount}
                         />
                     </View>
 
@@ -65,6 +81,7 @@ export default function addExpense() {
                             placeholder="Dinner" 
                             TextInputStyle={styles.textInput}
                             onChangeText={(value) => setExpenseForm({ ...expenseForm, expenseTitle: value})}
+                            value={expenseForm.expenseTitle}
                         />
                     </View>
 
@@ -75,13 +92,14 @@ export default function addExpense() {
                             placeholder="Enter message"
                             TextInputStyle={[styles.textInput, {height: 120}]}
                             onChangeText={(value) => setExpenseForm({...expenseForm, message: value})}
+                            value={expenseForm.message}
                         />
                     </View>
                 </View>
                 
                 <View style={styles.actionBtn}>
                     <Pressable onPress={handleSubmitForm} style={styles.mainBtn}>
-                        <Text style={styles.btnTxt}>Save Changes</Text>
+                        <Text style={styles.btnTxt}>Save</Text>
                     </Pressable>
                 </View>
             </ScrollView>
@@ -144,16 +162,28 @@ const styles = StyleSheet.create({
     mainBtn:{
         backgroundColor: '#00d09e',
         paddingVertical: 8,
-        paddingHorizontal: 38,
+        paddingHorizontal: 68,
         borderRadius: 14,
         alignItems: 'center',
         marginTop: 8
     },
 
-
     btnTxt: {
         fontWeight: 500,
         fontSize: 16
     },
+
+    txtResponseContainer: {
+        alignItems: 'center',
+        backgroundColor: '#4091fbba',
+        width: '100%',
+        borderRadius: 8,
+        paddingVertical: 4
+    },
+
+    txtResponse: {
+        color: '#FFF',
+        fontWeight: '500'
+    }
 
 })

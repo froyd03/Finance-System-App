@@ -28,7 +28,7 @@ export async function createTransaction(transaction, userId) {
         );
         const currentBalance = parseFloat(getUserBalance[0].balance);
         const currentExpenses = parseFloat(getUserBalance[0].expenses);
-        const floatAmount = parseFloat(amount)
+        const floatAmount = parseFloat(amount);
 
         if(category === "Income") {
             const newBalance = currentBalance + floatAmount;
@@ -79,7 +79,7 @@ export async function createTransaction(transaction, userId) {
 
     } catch (error) {
         await connection.rollback();
-        return { "Transaction failed! try again, error": error.message };
+        return { "message": "Something went wrong, Try again." };
 
     } finally {
         connection.release();

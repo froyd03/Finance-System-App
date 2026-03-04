@@ -12,7 +12,7 @@ app.use(cors());
 
 app.use('/user', userController);
 app.use('/transactions', authMiddleware, transactionsController);
-app.use('/templates',  templatesController);
+app.use('/templates', authMiddleware, templatesController);
 
 app.listen(5000, () => {
     console.log("port in 5000");

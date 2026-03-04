@@ -166,7 +166,7 @@ export const Rent = (props) => {
     );
 };
 
-export const Salary = (props) => {
+export const Income = (props) => {
     return (
         <Svg width={props.size} height={props.size} fill="none" viewBox="0 0 27 26" {...props}>
             <Path 
@@ -270,6 +270,17 @@ export const ArrowUp = (props) => {
       <Path
         fill={props.color}
         d="M19.792 6.25c0-.575-.467-1.042-1.042-1.042H9.375a1.042 1.042 0 1 0 0 2.084h8.333v8.333a1.042 1.042 0 0 0 2.084 0zM6.25 18.75l.737.737 12.5-12.5-.737-.737-.737-.737-12.5 12.5z"
+      />
+    </Svg>
+  );
+};
+
+export const More = (props) => {
+  return (
+    <Svg width={props.size} height={props.size} fill="none" viewBox="0 0 24 24" {...props}>
+      <Path
+        fill={props.color}
+        d="M10.6 16q0-2.024.363-2.912.363-.886 1.537-1.938 1.024-.9 1.563-1.562t.537-1.513q0-1.025-.687-1.7T12 5.7q-1.275 0-1.937.775-.662.776-.938 1.575L6.55 6.95q.525-1.6 1.925-2.775T12 3q2.625 0 4.038 1.463t1.412 3.512q0 1.25-.537 2.138t-1.688 2.012Q14 13.3 13.738 13.913T13.475 16zm1.4 6q-.825 0-1.412-.587A1.93 1.93 0 0 1 10 20q0-.825.588-1.412.589-.586 1.412-.588a1.92 1.92 0 0 1 1.413.588q.59.59.587 1.412a1.95 1.95 0 0 1-.587 1.413A1.9 1.9 0 0 1 12 22"
       />
     </Svg>
   );

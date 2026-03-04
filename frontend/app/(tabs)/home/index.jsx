@@ -5,11 +5,12 @@ import DashboardContent from "../../../components/DashboardContent";
 import { useEffect, useRef, useState } from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import TemplateCard from "../../../components/TemplateCard"
-import PresetsContent from "../../../components/PresetsContent";
-import { Family, Student, Profile, Food, Car, Salary } from "@/assets/icons/SvgIcons";
+import Dashboard from "../../../components/Dashboard";
+import { Family, Student, Profile, Food, Car, Income } from "@/assets/icons/SvgIcons";
 import { Link } from "expo-router";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from "../../../components/Header";
+import { templatesAPI } from "../../../services/api";
 
 export default function HomeScreen() {
 
@@ -69,37 +70,10 @@ export default function HomeScreen() {
                         </Pressable>
                     ))}
                 </View>
-                {activeTab === "Dashboard" && <FlatList
+                {activeTab === "Presets" && <FlatList
                     ListHeaderComponent={
                         <View style={{ gap: 26 }}>
-                            <View style={styles.monthlyUpdates}>
-                                <View style={{width:"35%", justifyContent: "center", alignItems: "center",}}>
-                                    <View style={styles.iconCircle}>
-                                        <Car size={42} color="#000000b0" />
-                                    </View>
-                                    <Text style={{textAlign: "center", fontSize: 12, width: "55%"}}>Savings On Goals</Text>
-                                
-                                </View>
-                                <View style={{height: "100%", width: 2, marginRight: 10, backgroundColor: "#FFFF"}}/>
-
-                                <View style={{width:"60%", gap: 8, justifyContent: "center", alignItems: "flex-start",}}>
-                                    <View style={styles.itemRow}>
-                                        <Salary size={28} color="#000000b0" />
-                                        <View>
-                                            <Text style={{fontSize: 12}}>Revenue Last Month</Text>
-                                            <Text style={{fontSize: 16, fontWeight: "bold"}}>$500.00</Text>
-                                        </View>
-                                    </View>
-                                    <View style={{width: "100%", height: 2, backgroundColor: "#FFFF"}}/>
-                                    <View style={styles.itemRow}>
-                                        <Food size={28} color="#000000b0" />
-                                        <View>
-                                            <Text style={{fontSize: 12}}>Food Last Month</Text>
-                                            <Text style={{fontSize: 16, color: "#0068ff", fontWeight: "bold"}}>-$100.00</Text>
-                                        </View>
-                                    </View>
-                                </View>
-                            </View>
+                            
                             <View style={styles.templateHeader}>
                                 <Text style={{fontWeight: "500", color: "#093030", fontSize: 16}}>
                                     Quick Start Templates
@@ -126,11 +100,11 @@ export default function HomeScreen() {
                 />}
 
                 {
-                    (activeTab === "Presets" && true)  
+                    (activeTab === "Dashboard" && true)  
                     ? 
-                    <PresetsContent /> 
+                    <Dashboard /> 
                     : 
-                    (activeTab !== "Dashboard") 
+                    (activeTab !== "Presets") 
                     && 
                     <Text style={{fontStyle: "italic"}}>No Template Active</Text>
                 }
@@ -205,7 +179,8 @@ const styles = StyleSheet.create({
     templateHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        width: '100%'
     },
 
     addBtn: {

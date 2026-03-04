@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "92%",
+        width: "96%",
         // backgroundColor: "#DFF7E2",
         // pading: 110
     },

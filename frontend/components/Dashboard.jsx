@@ -1,39 +1,10 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp } from "../assets/icons/SvgIcons"
-import { Food, Groceries, Transport } from "../assets/icons/SvgIcons"
+import * as Icons from "../assets/icons/SvgIcons"
+import { templatesAPI } from '../services/api';
 
-export default function PresetsContent() {
-
-    const categoriesData = [
-        {
-            id: 0,
-            name: "Food",
-            remainingBudget: 2000,
-            spent: 1000,
-            limit: 3000,
-            status: 30,
-            icon: <Food size={26} color="#FFF"/>
-        },
-        {
-            id: 1,
-            name: "Groceries",
-            remainingBudget: 500,
-            spent: 1000,
-            limit: 1500,
-            status: 80,
-            icon: <Groceries size={26} color="#FFF"/>
-        },
-        {
-            id: 2,
-            name: "Transport",
-            remainingBudget: 300,
-            spent: 1200,
-            limit: 1500,
-            status: 90,
-            icon: <Transport size={26} color="#FFF"/>
-        }
-    ]
+export default function Dashboard() {
 
     const colorStatus = (status) => {
         if(status >= 90){
@@ -44,6 +15,46 @@ export default function PresetsContent() {
             return "#34C759";
         }
     }
+
+    const pesoFormat = (number, minDigit) => {
+        return number.toLocaleString(
+            'en-PH',
+            {
+                style: 'currency', 
+                currency: 'PHP',
+                minimumFractionDigits: minDigit, 
+            }
+        )
+    }
+
+    const getTotalBudget = () => {
+        const numOfArr = categoryData?.map(value => parseFloat(value.maximum));
+
+        const sum = numOfArr.reduce((acc, currentValue) => acc + currentValue, 0)
+        return pesoFormat(sum, 2);
+    }
+
+    // const remainingBudget = () => {
+    //     const numOfArr = categoryData?.map(value => parseFloat(value.spent));
+
+    //     const sum = numOfArr.reduce((acc, currentValue) => acc - currentValue, 0)
+    //     return sum;
+    // }
+
+    const [categoryData, setCategoryData] = useState([]);
+
+    useEffect(() => {
+            const fetchData = async () => {
+                try{
+                    const {data} = await templatesAPI.getUserTemplateCategory();
+                    setCategoryData(data);
+                } catch(error) {
+                    console.log("error from components > home > index", error)
+                }
+            }
+    
+            fetchData();
+    }, [])
 
     return (
         <FlatList
@@ -64,7 +75,7 @@ export default function PresetsContent() {
                                 <ArrowUp size={24} color="#000000b0" />
                                 <View>
                                     <Text style={{fontSize: 12}}>Total Budget</Text>
-                                    <Text style={{fontSize: 16, fontWeight: "bold"}}>₱0.00</Text>
+                                    <Text style={{fontSize: 16, fontWeight: "bold"}}>{getTotalBudget()}</Text>
                                 </View>
                             </View>
                             <View style={{width: "100%", height: 2, backgroundColor: "#FFFF"}}/>
@@ -88,31 +99,37 @@ export default function PresetsContent() {
                     </View>
                 </View>
             }
-            data={categoriesData}
+            data={categoryData}
             contentContainerStyle={styles.itemContainer}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => 
-                <View style={styles.categoryItem}>
-                    <View style={styles.iconContainer}>
-                        {item.icon}
-                    </View>
-                    <View style={styles.categoryDetail}>
-                        <View style={styles.row1}>
-                            <Text style={{fontWeight: "500", fontSize: 14}}>{item.name}</Text>
-                            <Text style={{color: "#0068FF", fontWeight: "500", fontSize: 12}}>
-                                ₱{item.spent} / ₱{item.limit}
+            renderItem={({ item }) => {
+                const Icon = Icons[item.name];
+                const percentStatus = Math.ceil((parseFloat(item.spent) / parseFloat(item.maximum)) * 100)
+                return (
+                    <View style={styles.categoryItem}>
+                        <View style={styles.iconContainer}>
+                            <Icon size={26} color="#FFF"/>
+                        </View>
+                        <View style={styles.categoryDetail}>
+                            <View style={styles.row1}>
+                                <Text style={{fontWeight: "500", fontSize: 14}}>{item.name}</Text>
+                                <Text style={{color: "#0068FF", fontWeight: "500", fontSize: 12}}>
+                                    {pesoFormat(+item.spent, 0)} / {pesoFormat(+item.maximum, 0)}
+                                </Text>
+                            </View>
+                            <View style={styles.statusBar}>
+                                <View style={[styles.inner, {width:`${percentStatus}%`}]}>
+                                </View>
+                            </View>
+                            <Text style={{color: colorStatus(percentStatus), fontWeight: "500", fontSize: 12}}>
+                                {pesoFormat((parseFloat(item.maximum) - parseFloat(item.spent)), 0)} Left
                             </Text>
                         </View>
-                        <View style={styles.statusBar}>
-                            <View style={[styles.inner, {width: `${item.status}%`}]}>
-                            </View>
-                        </View>
-                        <Text style={{color: colorStatus(item.status), fontWeight: "500", fontSize: 12}}>₱{item.remainingBudget} Left</Text>
                     </View>
-                </View>
-            }
+                )
+            }}
             showsVerticalScrollIndicator={false}
-
+            ListFooterComponent={<View style={{marginBottom: 30}}/>}
         />
     )
 }

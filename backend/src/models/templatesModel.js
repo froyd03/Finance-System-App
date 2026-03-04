@@ -4,7 +4,7 @@ import { isUserHasActiveTemplate } from './userModel.js';
 export async function getTemplates(userId) {
     try {
         const [rows] = await database.query(
-            `SELECT * FROM templates WHERE userId = ?`,
+            `SELECT * FROM templates WHERE userId = ? AND userId = null`,
             [userId]
         );
         return rows;
@@ -18,7 +18,7 @@ export async function getTemplates(userId) {
 export async function getTemplateByUserId(userId) {
     try {
         const [rows] = await database.query(
-            `SELECT * FROM templates WHERE userId = ?`,
+            `SELECT * FROM finance_app.templates WHERE userId = ? OR userId IS NULL;`,
             [userId]
         );
 
@@ -26,6 +26,7 @@ export async function getTemplateByUserId(userId) {
         for (const row of rows) {
             const categories = await getCategoriesByTemplateId(row.templateId);
             templates.push({
+                userId: row.userId,
                 name: row.name,
                 budgetPeriod: row.budgetPeriod,
                 categories: categories
@@ -35,7 +36,28 @@ export async function getTemplateByUserId(userId) {
       
     } catch (error) {
         console.error('Error fetching templates:', error);
-        throw error;
+        return {'message': `Error fetching templates ${error}`}
+    }
+}
+
+export async function getActiveTemplateCategoryUserId(userId){
+    try {
+        const [rows] = await database.query(
+            `SELECT 
+                templatecategories.id,
+                templatecategories.category_name AS name,
+                templatecategories.limit_amount AS maximum,
+                templatecategories.spent
+            FROM users
+            JOIN templates ON users.activeTemplateId = templates.templateId
+            JOIN templatecategories ON templates.templateId = templatecategories.templateId
+            WHERE users.userId = ?`,
+            [userId]
+        );
+        return rows
+    } catch(error) {
+        console.error('Error fetching Template category:', error);
+        return {'message': `Error fetching data ${error}`}
     }
 }
 
@@ -44,7 +66,8 @@ async function getCategoriesByTemplateId(templateId) {
         const [rows] = await database.query(
             `SELECT 
                 category_name AS name, 
-                limit_amount as limitAmount
+                limit_amount as limit,
+                spent
             FROM templatecategories 
             WHERE templateId = ?`,
             [templateId]
@@ -52,7 +75,7 @@ async function getCategoriesByTemplateId(templateId) {
         return rows;
     } catch (error) {
         console.error('Error fetching template by ID:', error);
-        throw error;
+        return {'message': `error fetching templates ${error}`}
     }
 }
 

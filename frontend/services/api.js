@@ -7,7 +7,7 @@ const API = axios.create({baseURL: 'http://192.168.1.2:5000'});
 API.interceptors.request.use(
   async (config) => {
     const token = await SecureStore.getItemAsync('token');
-    console.log('Token retrieved for request:', token);
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -50,4 +50,5 @@ export const transactionsAPI = {
 export const templatesAPI = {
     createTemplate: (data) => API.post('/templates/create', data),
     getTemplates: (userId) => API.get(`/templates/?userId=${userId}`),
+    getUserTemplateCategory: () => API.get('/templates/user-template')
 }
