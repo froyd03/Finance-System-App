@@ -18,22 +18,18 @@ export async function getTemplates(userId) {
 export async function getTemplateByUserId(userId) {
     try {
         const [rows] = await database.query(
-            `SELECT * FROM finance_app.templates WHERE userId = ? OR userId IS NULL;`,
+            `SELECT 
+                templates.userId,
+                templates.templateId AS id,
+                templates.name,
+                templates.budgetPeriod
+            FROM templates 
+            WHERE userId = ? OR userId IS NULL
+            ORDER BY userId ASC;`,
             [userId]
         );
 
-        const templates = [];
-        for (const row of rows) {
-            const categories = await getCategoriesByTemplateId(row.templateId);
-            templates.push({
-                userId: row.userId,
-                name: row.name,
-                budgetPeriod: row.budgetPeriod,
-                categories: categories
-            });
-        }
-        return templates;
-      
+        return rows      
     } catch (error) {
         console.error('Error fetching templates:', error);
         return {'message': `Error fetching templates ${error}`}
@@ -47,14 +43,15 @@ export async function getActiveTemplateCategoryUserId(userId){
                 templatecategories.id,
                 templatecategories.category_name AS name,
                 templatecategories.limit_amount AS maximum,
-                templatecategories.spent
+                templatecategories.spent,
+                templates.budgetPeriod AS period
             FROM users
             JOIN templates ON users.activeTemplateId = templates.templateId
             JOIN templatecategories ON templates.templateId = templatecategories.templateId
             WHERE users.userId = ?`,
             [userId]
         );
-        return rows
+        return rows;
     } catch(error) {
         console.error('Error fetching Template category:', error);
         return {'message': `Error fetching data ${error}`}
@@ -66,7 +63,7 @@ async function getCategoriesByTemplateId(templateId) {
         const [rows] = await database.query(
             `SELECT 
                 category_name AS name, 
-                limit_amount as limit,
+                limit_amount as maximum,
                 spent
             FROM templatecategories 
             WHERE templateId = ?`,

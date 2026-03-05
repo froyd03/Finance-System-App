@@ -4,7 +4,7 @@ import * as TemplateModel from '../models/templatesModel.js';
 
 router.get('/', async (req, res) => {
     try {
-        const userId = req.query.userId; 
+        const userId = req.user.id; 
         const templates = await TemplateModel.getTemplateByUserId(userId);   
         res.status(200).json(templates);
 

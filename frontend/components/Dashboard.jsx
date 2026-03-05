@@ -9,7 +9,7 @@ export default function Dashboard() {
     const colorStatus = (status) => {
         if(status >= 90){
             return "#FF383C";
-        }else if(status > 50){
+        }else if(status >= 70){
             return "#FFCC00"
         }else{
             return "#34C759";
@@ -31,15 +31,17 @@ export default function Dashboard() {
         const numOfArr = categoryData?.map(value => parseFloat(value.maximum));
 
         const sum = numOfArr.reduce((acc, currentValue) => acc + currentValue, 0)
-        return pesoFormat(sum, 2);
+        return sum;
     }
 
-    // const remainingBudget = () => {
-    //     const numOfArr = categoryData?.map(value => parseFloat(value.spent));
+    const remainingBudget = () => {
+        const numOfArr = categoryData?.map(value => parseFloat(value.spent));
 
-    //     const sum = numOfArr.reduce((acc, currentValue) => acc - currentValue, 0)
-    //     return sum;
-    // }
+        const sum = numOfArr.reduce((acc, currentValue) => acc + currentValue, 0)
+        return getTotalBudget() - sum;
+    }
+
+    const budgetPercentStatus = (spent, maximum) => Math.ceil((parseFloat(spent) / parseFloat(maximum)) * 100)
 
     const [categoryData, setCategoryData] = useState([]);
 
@@ -63,9 +65,9 @@ export default function Dashboard() {
                     <View style={styles.monthlyUpdates}>
                         <View style={{width:"35%", justifyContent: "center", alignItems: "center",}}>
                             <View style={styles.iconCircle}>
-                                <Text>73%</Text>
+                                <Text>{budgetPercentStatus(remainingBudget(), getTotalBudget()) || 0}%</Text>
                             </View>
-                            <Text style={{textAlign: "center", fontSize: 12, width: "55%"}}>Weekly Budget</Text>
+                            <Text style={{textAlign: "center", fontSize: 12, width: "55%"}}>{categoryData[0]?.period} Budget</Text>
                         
                         </View>
                         <View style={{height: "100%", width: 2, marginRight: 10, backgroundColor: "#FFFF"}}/>
@@ -75,7 +77,7 @@ export default function Dashboard() {
                                 <ArrowUp size={24} color="#000000b0" />
                                 <View>
                                     <Text style={{fontSize: 12}}>Total Budget</Text>
-                                    <Text style={{fontSize: 16, fontWeight: "bold"}}>{getTotalBudget()}</Text>
+                                    <Text style={{fontSize: 16, fontWeight: "bold"}}>{pesoFormat(getTotalBudget())|| '...'}</Text>
                                 </View>
                             </View>
                             <View style={{width: "100%", height: 2, backgroundColor: "#FFFF"}}/>
@@ -83,7 +85,9 @@ export default function Dashboard() {
                                 <ArrowDown size={24} color="#0068ff" />
                                 <View>
                                     <Text style={{fontSize: 12}}>Remaining Budget</Text>
-                                    <Text style={{fontSize: 16, color: "#0068ff", fontWeight: "bold"}}>₱0.00</Text>
+                                    <Text style={{fontSize: 16, color: "#0068ff", fontWeight: "bold"}}>
+                                        {pesoFormat(remainingBudget()) || '...'}
+                                    </Text>
                                 </View>
                             </View>
                         </View>
@@ -118,10 +122,14 @@ export default function Dashboard() {
                                 </Text>
                             </View>
                             <View style={styles.statusBar}>
-                                <View style={[styles.inner, {width:`${percentStatus}%`}]}>
+                                <View style={[styles.inner, {width:`${budgetPercentStatus(item.spent, item.maximum)}%`}]}>
                                 </View>
                             </View>
-                            <Text style={{color: colorStatus(percentStatus), fontWeight: "500", fontSize: 12}}>
+                            <Text style={{
+                                    color: colorStatus(budgetPercentStatus(item.spent, item.maximum)), 
+                                    fontWeight: "500", 
+                                    fontSize: 12}}
+                                >
                                 {pesoFormat((parseFloat(item.maximum) - parseFloat(item.spent)), 0)} Left
                             </Text>
                         </View>

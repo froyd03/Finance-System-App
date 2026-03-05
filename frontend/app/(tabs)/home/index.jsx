@@ -1,12 +1,10 @@
-import { Pressable, FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Pressable, FlatList, StyleSheet, Text, View } from "react-native";
 import DashboardContent from "../../../components/DashboardContent";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import TemplateCard from "../../../components/TemplateCard"
 import Dashboard from "../../../components/Dashboard";
-import { Family, Student, Profile, Food, Car, Income } from "@/assets/icons/SvgIcons";
+import  * as Icons from "@/assets/icons/SvgIcons";
 import { Link } from "expo-router";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from "../../../components/Header";
@@ -14,29 +12,48 @@ import { templatesAPI } from "../../../services/api";
 
 export default function HomeScreen() {
 
-    const templateData = [
-        {
-            id: 1,
-            icon: <Student size={24} color="#FFF"/>,
-            title: "Student Budget",
-            budgetDuration: "Weekly"
-        },
-        {
-            id: 2,
-            icon: <Family size={24} color="#FFF"/>,
-            title: "Family Essentials",
-            budgetDuration: "Monthly"
-        },
-        {
-            id: 3,
-            icon: <Profile size={24} color="#FFF"/>,
-            title: "Everyday Spending",
-            budgetDuration: "Daily"
-        },
-    ];
-
     const headerTabs = ["Dashboard", "Presets"];
     const [activeTab, setActiveTab] = useState("Dashboard");
+
+    const TemplateSeperator = ({ userId, index }) => {
+       
+        const templateUserId = templateData.length < index || index !== 0
+            ?
+            templateData[index-1].userId
+            :
+            templateData[index].userId
+
+        return (
+            <View>
+                {templateUserId !== userId && 
+                    <Text style={{
+                            fontWeight: "500", 
+                            color: "#093030", 
+                            fontSize: 16, 
+                            marginTop: 12,
+                            marginBottom: 18
+                        }}>
+                        Custom Templates
+                    </Text>
+                }
+            </View>
+        )
+    }
+
+    const [templateData, setTemplateData] = useState([]);
+    useEffect(() => {
+        const fetchTemplateData = async () => {
+            try{
+                const {data} = await templatesAPI.getTemplates();
+                setTemplateData(data)
+                console.log(data)
+            } catch(error) {
+                console.log(error)
+            }
+        }
+
+        fetchTemplateData();
+    }, [])
 
     return (
         <SafeAreaProvider style={styles.body}>
@@ -87,15 +104,20 @@ export default function HomeScreen() {
                     contentContainerStyle={styles.itemContainer}
                     data={templateData}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => 
+                    renderItem={({ item, index }) => 
+                        <>
+                        <TemplateSeperator userId={item.userId} index={index}/>
                         <Link href={`/home/${item.id}`}>
                             <TemplateCard 
-                                icon={item.icon}
-                                title={item.title}
-                                budgetDuration={item.budgetDuration}
+                                icon={<Icons.Profile size={24} color='#FFF'/>}
+                                title={item.name}
+                                budgetDuration={item.budgetPeriod}
                             />
                         </Link>
+                        </>
+                        
                     }
+                    ListFooterComponent={<View style={{marginBottom: 30}}/>}
                     showsVerticalScrollIndicator={false}
                 />}
 
