@@ -1,14 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { StyleSheet, Text, View, Pressable } from 'react-native'
 import { Profile } from '@/assets/icons/SvgIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from '../../../components/Header';
+import * as SecureStore from 'expo-secure-store';
+import {router} from 'expo-router'
 
 const profile = () => {
 
-  return (
+    const handleLogout = async () => {
+        await SecureStore.deleteItemAsync('token');
+        router.replace('/')
+    }
+
+    return (
       <SafeAreaProvider style={styles.body}>
             <View style={styles.headerDashboard}>
                 <Header backButton={true} title="Profile"/>
@@ -36,12 +42,12 @@ const profile = () => {
                         </View>
                         <Text style={styles.btnTxt}>Settings</Text>
                     </View>
-                    <View style={styles.rowContainer}>
+                    <Pressable onPressOut={handleLogout} style={styles.rowContainer}>
                         <View style={styles.iconContainer}>
                             <MaterialCommunityIcons name="logout" size={24} color="#FFF" />
                         </View>
                         <Text style={styles.btnTxt}>Logout</Text>
-                    </View>
+                    </Pressable>
                 </View>
             </View>
       </SafeAreaProvider>   

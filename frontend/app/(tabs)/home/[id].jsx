@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Pressable, ScrollView, Modal} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -7,52 +7,46 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import CustomTextInput from "../../../components/CustomTextInput";
 import * as Icons from '@/assets/icons/SvgIcons';
 
+const CATEGORY_ICONS = [
+    "Food", 
+    "Transport", 
+    "Medicine", 
+    "Groceries", 
+    "Rent", 
+    "Gifts", 
+    "Savings", 
+    "Entertainment", 
+];
+
 export default function TemplateForm() {
 
     const { id } = useLocalSearchParams();
 
-    const templateData = [
-        {
-            id: 1,
-            title: "Student Budget",
-            budgetDuration: "Weekly",
-            categories: [
-                {name: "Food", budget: 3000},
-                {name: "Groceries", budget: 1500},
-                {name: "Savings", budget: 1500},
-            ],
-        },
-        {
-            id: 2,
-            title: "Family Essentials",
-            budgetDuration: "Monthly",
-            categories: [
-                {name: "Food", budget: 5000},
-                {name: "Rent", budget: 10000},
-                {name: "Entertainment", budget: 3000},
-                {name: "Medicine", budget: 200},
-            ],
-        },
-        {
-            id: 3,
-            title: "Everyday Spending",
-            budgetDuration: "Daily",
-            categories: [
-                {name: "Food", budget: 1200},
-                {name: "Transport", budget: 800},
-            ],
-        },
-            
-    ];
-    
+    const [showModal, setShowModal] = useState(false);
+
+    const [responseMessage, setResponseMessage] = useState('');
+    const handleAddCategory = (category) => {
+        const found = categories.find(value => value === category);
+
+        if(found){
+            setResponseMessage(`${found} is already in the list!`);
+        }else{
+            setCategories(prev => [...prev, category]);
+            setResponseMessage('');
+        }
+        
+        setShowModal(false);
+    }
+
+    const [categories, setCategories] = useState([]);
+    const handleRemoveCategory = (index) => {
+        setCategories(prev => prev.filter((_, itemIndex) => index !== itemIndex))
+        setResponseMessage('');
+    }
+
     const [template, setTemplate] = useState({});
     useEffect(() => {
 
-        templateData.forEach((templateItem) => {
-            if(templateItem.id === parseInt(id)){
-                setTemplate(templateItem)
-            }
-        })
     }, []);
 
     return (
@@ -63,29 +57,36 @@ export default function TemplateForm() {
             />
             <View style={styles.dashboard}></View>
         
-            <ScrollView contentContainerStyle={{alignItems: "center", gap: 32, paddingBottom: 28,}} style={styles.itemContents}>
+            <ScrollView contentContainerStyle={{ alignItems: "center", gap: 32, paddingBottom: 28,}} style={styles.itemContents}>
                 <View style={styles.inputContainer}>
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Template Name</Text>
-                        <CustomTextInput value={template.title} placeholder="Personal Template" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput value={''} placeholder="Personal Template" TextInputStyle={styles.textInput}/>
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Budget Period</Text>
-                        <CustomTextInput value={template.budgetDuration} placeholder="Weekly" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput value={''} placeholder="Weekly" TextInputStyle={styles.textInput}/>
                     </View>
                 </View>
-                <View style={{alignItems: "center", gap: 16}}>
+
+                <View style={{width: '90%', alignItems: "center", gap: 16}}>
 
                     <View style={styles.catetgoryAction}>
                         <Text style={{fontSize: 16, fontWeight: "500"}}>Categories:</Text>
-                        <Pressable style={styles.addBtn}>
+                        <Pressable onPressOut={() => setShowModal(true)} style={styles.addBtn}>
                             <FontAwesome6 name="add" size={18} color="#000"/>
                         </Pressable>
                     </View>
+
+                    {responseMessage &&
+                        <View style={styles.txtResponseContainer}>
+                            <Text style={styles.txtResponse}>{responseMessage}</Text>
+                        </View>
+                    } 
                     
-                    {template.categories?.map((item, index) => {
-                        const IconComponent = Icons[item.name];
+                    {categories.map((item, index) => {
+                        const IconComponent = Icons[item];
 
                         return(
                             <View key={index} style={styles.categoriesContainer}>
@@ -93,20 +94,22 @@ export default function TemplateForm() {
                                     <IconComponent size={24} color="#FFF"/>
                                 </View>
                                 <View style={styles.categoryTxtInputContainer}>
-                                    <Text style={{fontSize: 14, color: "#000000b7", fontWeight: "bold"}}>{item.name}</Text>
+                                    <Text style={{fontSize: 14, color: "#000000b7", fontWeight: "bold"}}>{item}</Text>
                                     <CustomTextInput 
                                         placeholder="₱0.00" 
-                                        value={String(item.budget)} 
+                                        value={String(item)} 
                                         keyboardType="numeric"
                                         TextInputStyle={[styles.textInput, {height: 38}]}
                                     />
                                 </View>
+                                <Pressable onPressOut={() => handleRemoveCategory(index)}  style={styles.addBtn}>
+                                    <FontAwesome6 name="minus" size={18} color="#000000a5"/>
+                                </Pressable>
                             </View>
                         )
                     })}
-                    
                 </View>
-                <View style={styles.actionBtn}>
+                <View>
                     <Pressable style={styles.mainBtn}>
                         <Text style={styles.btnTxt}>Apply Template</Text>
                     </Pressable>
@@ -115,6 +118,43 @@ export default function TemplateForm() {
                     </Pressable>
                 </View>
             </ScrollView>
+            <Modal
+                animationType="slide"
+                visible={showModal}
+                backdropColor="#00000015"
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <View>
+                            <Text style={styles.modalTitle}>
+                                Select a Category
+                            </Text>
+                            <View style={{width: '100%', height: 1, backgroundColor: '#00000054'}}/>
+                        </View>
+                        <ScrollView contentContainerStyle={{
+                            justifyContent: 'center', 
+                            alignItems: 'center', 
+                            flexDirection: 'row', 
+                            gap: 20, 
+                            flexWrap: 'wrap'
+                        }}>
+                            {CATEGORY_ICONS.map(item => {
+                                const Icon = Icons[item];
+                                return(
+                                    <Pressable onPressOut={() => handleAddCategory(item)} key={item} style={styles.iconContainer}>
+                                        <Icon size={32} color="#FFF"/>
+                                    </Pressable>
+                                )
+                            })}
+                        </ScrollView>
+                        <Pressable
+                            style={styles.hideModalBtn}
+                            onPress={() => setShowModal(false)}>
+                            <Text style={styles.btnTxt}>Cancel</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaProvider>
     )
 }
@@ -173,7 +213,7 @@ const styles = StyleSheet.create({
     },
 
     catetgoryAction: {
-        width: "95%",
+        width: "100%",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between"
@@ -183,20 +223,18 @@ const styles = StyleSheet.create({
         padding: 12,
         borderRadius: 18,
         backgroundColor: "#0068ff",
-        alignSelf: "flex-end"
     },
 
     categoryTxtInputContainer: {
-        width: "80%",
+        width: "65%",
         gap: 2,
     },
 
     categoriesContainer: {
         gap: 12,
-        width: "90%",
+        width: "100%",
         flexDirection: "row",
         alignItems: "center",
-       
     },
 
     mainBtn:{
@@ -221,4 +259,59 @@ const styles = StyleSheet.create({
         fontWeight: 500,
         fontSize: 16
     },
+
+    centeredView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    modalView: {
+        backgroundColor: '#FFF',
+        borderRadius: 18,
+        width: '75%',
+        flexDirection: 'column',
+        gap: 22,
+    },
+
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 600,
+        padding: 16,
+        alignSelf: 'center',
+        color: '#093030'
+    },
+
+    btnContainer: {
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 4
+    },
+
+    btnTextLabel: {
+        fontWeight: "500",
+        color: "#000000b7"
+    },
+
+    hideModalBtn: {
+        alignSelf: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 28,
+        backgroundColor: '#00d09e',
+        marginBottom: 16,
+        borderRadius: 12,
+    },
+
+    txtResponseContainer: {
+        alignItems: 'center',
+        backgroundColor: '#4091fbba',
+        width: '100%',
+        borderRadius: 8,
+        paddingVertical: 4
+    },
+
+    txtResponse: {
+        color: '#FFF',
+        fontWeight: '500'
+    }
 })
