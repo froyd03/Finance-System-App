@@ -15,6 +15,20 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/categories', async (req, res) => {
+    try{
+        const templateId = req.query.templateId;
+        const userId = req.user.id;
+        const result = await TemplateModel.getCategoriesByTemplateId(templateId, userId);
+        res.status(200).json(result);
+        console.log(result)
+    } catch(error){
+
+        console.error('Error fetching templates:', error);
+        res.status(500).json({ error: 'Failed to fetch templates' });
+    }
+})
+
 router.get('/user-template', async (req, res) => {
     try {
         const userId = req.user.id; 

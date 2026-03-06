@@ -58,18 +58,30 @@ export async function getActiveTemplateCategoryUserId(userId){
     }
 }
 
-async function getCategoriesByTemplateId(templateId) {
+export async function getCategoriesByTemplateId(templateId, userId) {
     try {
         const [rows] = await database.query(
             `SELECT 
+                templates.name AS template,
+                templates.budgetPeriod AS period,
                 category_name AS name, 
-                limit_amount as maximum,
-                spent
-            FROM templatecategories 
-            WHERE templateId = ?`,
-            [templateId]
+                limit_amount AS maximum
+            FROM templates 
+            JOIN templatecategories ON templates.templateId = templatecategories.templateId
+            WHERE templates.templateId = ? AND (templates.userId = ? OR templates.userId IS NULL)`,
+            [templateId, userId]
         );
-        return rows;
+
+        const categoryFiltered = rows.map(item => ({
+            name: item.name, 
+            maximum: item.maximum
+        }))
+
+        return {
+            name: rows[0].template,
+            period: rows[0].period,
+            category: categoryFiltered
+        };
     } catch (error) {
         console.error('Error fetching template by ID:', error);
         return {'message': `error fetching templates ${error}`}

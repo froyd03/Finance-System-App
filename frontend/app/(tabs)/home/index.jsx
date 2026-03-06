@@ -46,7 +46,6 @@ export default function HomeScreen() {
             try{
                 const {data} = await templatesAPI.getTemplates();
                 setTemplateData(data)
-                console.log(data)
             } catch(error) {
                 console.log(error)
             }

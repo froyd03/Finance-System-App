@@ -6,6 +6,7 @@ import Header from '../../../components/Header';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import CustomTextInput from "../../../components/CustomTextInput";
 import * as Icons from '@/assets/icons/SvgIcons';
+import { templatesAPI } from '../../../services/api';
 
 const CATEGORY_ICONS = [
     "Food", 
@@ -26,27 +27,57 @@ export default function TemplateForm() {
 
     const [responseMessage, setResponseMessage] = useState('');
     const handleAddCategory = (category) => {
-        const found = categories.find(value => value === category);
+        const found = templates.category?.find(value => value.name === category);
 
         if(found){
-            setResponseMessage(`${found} is already in the list!`);
+            setResponseMessage(`${found.name} is already in the list!`);
         }else{
-            setCategories(prev => [...prev, category]);
+            setTemplates(prev => ({
+                ...prev,
+                category: [...prev.category, { name: category, maximum: '' }]
+            }));
             setResponseMessage('');
         }
         
         setShowModal(false);
     }
 
-    const [categories, setCategories] = useState([]);
     const handleRemoveCategory = (index) => {
-        setCategories(prev => prev.filter((_, itemIndex) => index !== itemIndex))
+        setTemplates(prev => ({
+            ...prev,
+            category: prev.category.filter((_, itemIndex) => index !== itemIndex)
+        }))
         setResponseMessage('');
     }
 
-    const [template, setTemplate] = useState({});
-    useEffect(() => {
+    const handleInputTemplateForm = (value) => {
+        setTemplates(prev => ({...prev, ...value}))
+    }
 
+    const handleInputCategory = (targetIndex, newValue) => {
+        setTemplates(prev =>({
+            ...prev, 
+            category: prev.category.map((value, index) => 
+                index === targetIndex ? {...value, maximum: newValue} : value
+            )
+        }))
+        console.log(templates);
+    }
+
+    const [templates, setTemplates] = useState({});
+    useEffect(() => {
+        const fetchCategories = async () => {
+            
+            try{
+                const {data} = await templatesAPI.getCategoriesByTemplateId(id);
+                setTemplates(data);
+                console.log(data)
+            } catch(error) {
+                console.log(error);
+            }
+        }
+
+        fetchCategories();
     }, []);
 
     return (
@@ -61,12 +92,22 @@ export default function TemplateForm() {
                 <View style={styles.inputContainer}>
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Template Name</Text>
-                        <CustomTextInput value={''} placeholder="Personal Template" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            placeholder="Personal Template" 
+                            TextInputStyle={styles.textInput}
+                            value={templates.name}
+                            onChangeText={value => handleInputTemplateForm({name: value})}
+                        />
                     </View>
 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Budget Period</Text>
-                        <CustomTextInput value={''} placeholder="Weekly" TextInputStyle={styles.textInput}/>
+                        <CustomTextInput 
+                            placeholder="Weekly" 
+                            TextInputStyle={styles.textInput}
+                            value={templates.period}
+                            onChangeText={value => handleInputTemplateForm({period: value})}
+                        />
                     </View>
                 </View>
 
@@ -85,8 +126,8 @@ export default function TemplateForm() {
                         </View>
                     } 
                     
-                    {categories.map((item, index) => {
-                        const IconComponent = Icons[item];
+                    {templates.category?.map((item, index) => {
+                        const IconComponent = Icons[item.name];
 
                         return(
                             <View key={index} style={styles.categoriesContainer}>
@@ -94,12 +135,13 @@ export default function TemplateForm() {
                                     <IconComponent size={24} color="#FFF"/>
                                 </View>
                                 <View style={styles.categoryTxtInputContainer}>
-                                    <Text style={{fontSize: 14, color: "#000000b7", fontWeight: "bold"}}>{item}</Text>
+                                    <Text style={{fontSize: 14, color: "#000000b7", fontWeight: "bold"}}>{item.name}</Text>
                                     <CustomTextInput 
                                         placeholder="₱0.00" 
-                                        value={String(item)} 
                                         keyboardType="numeric"
                                         TextInputStyle={[styles.textInput, {height: 38}]}
+                                        value={item.maximum}
+                                        onChangeText={value => handleInputCategory(index, value)}
                                     />
                                 </View>
                                 <Pressable onPressOut={() => handleRemoveCategory(index)}  style={styles.addBtn}>
