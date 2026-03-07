@@ -21,7 +21,6 @@ router.get('/categories', async (req, res) => {
         const userId = req.user.id;
         const result = await TemplateModel.getCategoriesByTemplateId(templateId, userId);
         res.status(200).json(result);
-        console.log(result)
     } catch(error){
 
         console.error('Error fetching templates:', error);
@@ -65,6 +64,19 @@ router.patch('/set-active', async (req, res) => {
     } catch (error) {
         console.error('Error setting active template:', error);
         res.status(500).json({ error: 'Failed to set active template' });   
+    }
+});
+
+router.put('/', async (req, res) => {
+    try {
+        const templateForm = req.body;
+        const userId = req.user.id;
+        const result = await TemplateModel.updateTemplate(templateForm, userId);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error('Error setting active template:', error);
+        res.status(500).json({ error: 'Failed to update template  template' });   
     }
 });
     

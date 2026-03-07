@@ -27,14 +27,14 @@ export default function TemplateForm() {
 
     const [responseMessage, setResponseMessage] = useState('');
     const handleAddCategory = (category) => {
-        const found = templates.category?.find(value => value.name === category);
+        const found = templates.categories?.find(value => value.name === category);
 
         if(found){
             setResponseMessage(`${found.name} is already in the list!`);
         }else{
             setTemplates(prev => ({
                 ...prev,
-                category: [...prev.category, { name: category, maximum: '' }]
+                categories: [...prev.categories, { name: category, maximum: '' }]
             }));
             setResponseMessage('');
         }
@@ -45,7 +45,7 @@ export default function TemplateForm() {
     const handleRemoveCategory = (index) => {
         setTemplates(prev => ({
             ...prev,
-            category: prev.category.filter((_, itemIndex) => index !== itemIndex)
+            categories: prev.categories.filter((_, itemIndex) => index !== itemIndex)
         }))
         setResponseMessage('');
     }
@@ -57,11 +57,27 @@ export default function TemplateForm() {
     const handleInputCategory = (targetIndex, newValue) => {
         setTemplates(prev =>({
             ...prev, 
-            category: prev.category.map((value, index) => 
+            categories: prev.categories.map((value, index) => 
                 index === targetIndex ? {...value, maximum: newValue} : value
             )
         }))
         console.log(templates);
+    }
+
+    const handleSaveBtn = async () => {
+        try {
+            const templateBody = {
+                id,
+                name: templates.name,
+                period: templates.period,
+                categories: templates.categories
+            }
+
+            const {data} = await templatesAPI.updateTemplate(templateBody);
+            console.log(data)
+        } catch(error){
+            console.log(error)
+        }
     }
 
     const [templates, setTemplates] = useState({});
@@ -79,6 +95,10 @@ export default function TemplateForm() {
 
         fetchCategories();
     }, []);
+
+    useEffect(() => {
+    
+    }, [templates]);
 
     return (
         <SafeAreaProvider style={styles.body}>
@@ -126,7 +146,7 @@ export default function TemplateForm() {
                         </View>
                     } 
                     
-                    {templates.category?.map((item, index) => {
+                    {templates.categories?.map((item, index) => {
                         const IconComponent = Icons[item.name];
 
                         return(
@@ -155,7 +175,7 @@ export default function TemplateForm() {
                     <Pressable style={styles.mainBtn}>
                         <Text style={styles.btnTxt}>Apply Template</Text>
                     </Pressable>
-                    <Pressable style={styles.secondaryBtn}>
+                    <Pressable onPress={() => handleSaveBtn()} style={styles.secondaryBtn}>
                         <Text style={styles.btnTxt}>Save Changes</Text>
                     </Pressable>
                 </View>

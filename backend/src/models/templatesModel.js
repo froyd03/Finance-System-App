@@ -61,7 +61,9 @@ export async function getActiveTemplateCategoryUserId(userId){
 export async function getCategoriesByTemplateId(templateId, userId) {
     try {
         const [rows] = await database.query(
-            `SELECT 
+            `SELECT
+                templatecategories.id,
+                templates.userId,
                 templates.name AS template,
                 templates.budgetPeriod AS period,
                 category_name AS name, 
@@ -73,14 +75,16 @@ export async function getCategoriesByTemplateId(templateId, userId) {
         );
 
         const categoryFiltered = rows.map(item => ({
+            id: item.id,
             name: item.name, 
             maximum: item.maximum
         }))
 
         return {
+            userId: rows[0].userId,
             name: rows[0].template,
             period: rows[0].period,
-            category: categoryFiltered
+            categories: categoryFiltered
         };
     } catch (error) {
         console.error('Error fetching template by ID:', error);
@@ -173,4 +177,38 @@ export async function createTemplate(template) {
     } finally {
         connection.release();
     } 
+}
+
+export async function updateTemplate(templateFormData, userId) {
+    const connection = await database.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        const { id, name, period, categories} = templateFormData;
+        console.log(templateFormData)
+
+        const [updateUserTemplate] = await connection.execute(
+            `UPDATE templates SET name = ?, budgetPeriod = ? WHERE userId = ? AND templateId = ?`,
+            [name, period, userId, id]
+        );
+
+        for(const category of categories) {
+            await connection.execute(
+                `UPDATE templatecategories 
+                SET category_name = ?, limit_amount = ? 
+                WHERE id = ? AND templateId = ?`, 
+                [category.name, category.maximum, category.id, id]
+            );
+        }
+
+        await connection.commit();
+        return {message: `Success update for ${name} template`}
+
+    } catch(error) {
+        await connection.rollback();
+        return { error: 'Error updating template', details: error.message };
+    } finally {
+        connection.release()
+    }
 }

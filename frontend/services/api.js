@@ -50,6 +50,7 @@ export const transactionsAPI = {
 export const templatesAPI = {
     createTemplate: (data) => API.post('/templates', data),
     getTemplates: () => API.get(`/templates`),//
+    updateTemplate: (data) => API.put(`/templates`, data),//
     getUserTemplateCategory: () => API.get('/templates/user-template'),//
     getCategoriesByTemplateId: (templateId) => API.get(`/templates/categories/?templateId=${templateId}`),//
 }

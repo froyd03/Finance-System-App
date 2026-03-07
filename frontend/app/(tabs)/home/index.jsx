@@ -1,6 +1,6 @@
-import { Pressable, FlatList, StyleSheet, Text, View } from "react-native";
+import { Pressable, FlatList, StyleSheet, Text, View, ScrollView, RefreshControl } from "react-native";
 import DashboardContent from "../../../components/DashboardContent";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import TemplateCard from "../../../components/TemplateCard"
 import Dashboard from "../../../components/Dashboard";
@@ -39,18 +39,29 @@ export default function HomeScreen() {
             </View>
         )
     }
+    
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+
+        setTimeout(() => {
+            setRefreshing(false);
+            fetchTemplateData();
+            setActiveTab("Dashboard")
+        }, 2000);
+    }, []);
 
     const [templateData, setTemplateData] = useState([]);
-    useEffect(() => {
-        const fetchTemplateData = async () => {
-            try{
-                const {data} = await templatesAPI.getTemplates();
-                setTemplateData(data)
-            } catch(error) {
-                console.log(error)
-            }
+    const fetchTemplateData = async () => {
+        try{
+            const {data} = await templatesAPI.getTemplates();
+            setTemplateData(data)
+        } catch(error) {
+            console.log(error)
         }
+    }
 
+    useEffect(() => {
         fetchTemplateData();
     }, [])
 
@@ -58,9 +69,13 @@ export default function HomeScreen() {
         <SafeAreaProvider style={styles.body}>
             <Header title="Hi! Welcome Back" subText="Good Morning"/>
             <View style={styles.dashboard}>
-                <View style={{marginTop: 74}}>
+                <ScrollView 
+                    style={{marginTop: 74}}
+                    refreshControl={
+                        <RefreshControl progressViewOffset={-40} refreshing={refreshing} onRefresh={onRefresh} />
+                    }>
                     <DashboardContent />
-                </View>
+                </ScrollView>
             </View>
             <View style={styles.itemContents}>
                 <View style={styles.headerTab}>

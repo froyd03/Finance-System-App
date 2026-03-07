@@ -1,5 +1,5 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { FlatList, Pressable, StyleSheet, Text, View, RefreshControl, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TransactionCard from "../../../components/TransactionCard";
 import * as Icons from "@/assets/icons/SvgIcons";
@@ -17,19 +17,17 @@ const transactions = () => {
     }
 
     const [transactions, setTransactions] = useState([]);
-    useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                const {data} = await transactionsAPI.getTransactions();
-                setTransactions(data);
-                
-            } catch (error) {
-                console.log('Failed to fetch transactions:', error);
-            }
+    const fetchTransactions = async () => {
+        try {
+            const {data} = await transactionsAPI.getTransactions();
+            setTransactions(data);
+            
+        } catch (error) {
+            console.log('Failed to fetch transactions:', error);
         }
-        
-        fetchTransactions();
-    }, [])
+    }
+
+    useEffect(() => { fetchTransactions(); }, [])
 
     const MonthSeperator = ({ dateTime, index }) => {
         const month = dateTime.split(" ")[2];
@@ -76,10 +74,27 @@ const transactions = () => {
         return formatted[1]+ ' - ' + formatted[0];
     }
 
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+
+        setTimeout(() => {
+            setRefreshing(false);
+            fetchTransactions();
+        }, 2000);
+    }, []);
+
     return (
         <SafeAreaProvider style={styles.body}>
             <Header backButton={true} title="Transaction"/>
-            <View style={styles.headerDashboard}>
+            <ScrollView 
+                style={{height: "32%"}} 
+                contentContainerStyle={styles.headerDashboard}
+                refreshControl={
+                    <RefreshControl progressViewOffset={35} refreshing={refreshing} onRefresh={onRefresh} />
+                } 
+                >
                 <View style={styles.dashboardContent}>
                     <View style={styles.totalBalance}>
                         <Text style={{fontWeight: "500"}}>Total Balance</Text>
@@ -92,7 +107,7 @@ const transactions = () => {
                                 styles.rowContainer, 
                                 {backgroundColor: isBtnActive[0] ? "#0068ff" : "#FFF"}
                             ]}
-                            onPressOut={() => handleBtnPress(0)}
+                            onPress={() => handleBtnPress(0)}
                         >
                             <Icons.ArrowUp 
                                 size={20} 
@@ -121,7 +136,7 @@ const transactions = () => {
                                 styles.rowContainer, 
                                 {backgroundColor: isBtnActive[1] ? "#0068ff" : "#FFF"}
                             ]}
-                            onPressOut={() => handleBtnPress(1)}
+                            onPress={() => handleBtnPress(1)}
                         >
                             <Icons.ArrowDown 
                                 size={20} 
@@ -146,9 +161,10 @@ const transactions = () => {
                         </Pressable>
                     </View>
                 </View>
-            </View>
+            </ScrollView>
             <View style={styles.itemContents}>
                 <FlatList 
+                
                     data={transactions}
                     contentContainerStyle={styles.itemContainer}
                     keyExtractor={(item) => item.transactionId.toString()}
@@ -184,7 +200,6 @@ const styles = StyleSheet.create({
     },
 
     headerDashboard: {
-        height: "32%",
         alignItems: "center",
         justifyContent: "center"
     },
