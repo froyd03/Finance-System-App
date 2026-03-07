@@ -44,7 +44,8 @@ router.get('/user-template', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const template = req.body;
-        const newTemplate = await TemplateModel.createTemplate(template);
+        const userId = req.user.id;
+        const newTemplate = await TemplateModel.createTemplate(template, userId);
         res.status(201).json(newTemplate);
 
     } catch (error) {

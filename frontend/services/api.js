@@ -54,3 +54,7 @@ export const templatesAPI = {
     getUserTemplateCategory: () => API.get('/templates/user-template'),//
     getCategoriesByTemplateId: (templateId) => API.get(`/templates/categories/?templateId=${templateId}`),//
 }
+
+export const usersAPI = {
+    getBalance: () => API.get(`/user/user-balance`)
+}

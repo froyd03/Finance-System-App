@@ -147,23 +147,23 @@ export async function setAsActiveTemplate(templateId, userId) { //patch
     }
 }
 
-export async function createTemplate(template) {
+export async function createTemplate(template, userId) {
     const connection = await database.getConnection();
 
     try {
         await connection.beginTransaction();
 
-        const { userId, templateName, budgetPeriod, categories} = template;
+        const { name, period, categories} = template;
 
         const [result] = await connection.execute(
             `INSERT INTO templates(userId, name, budgetPeriod) VALUES (?, ?, ?)`, 
-            [userId, templateName, budgetPeriod]
+            [userId, name, period]
         );
 
         for (const category of categories) {
             await connection.execute(
                 `INSERT INTO templatecategories(templateId, category_name, limit_amount) VALUES (?, ?, ?)`, 
-                [result.insertId, category.name, category.limitAmount]
+                [result.insertId, category.name, category.maximum]
             );
         }
         console.log('Template created with ID:', result.insertId);
@@ -185,30 +185,64 @@ export async function updateTemplate(templateFormData, userId) {
     try {
         await connection.beginTransaction();
 
-        const { id, name, period, categories} = templateFormData;
-        console.log(templateFormData)
+        const { id, name, period, categories } = templateFormData;
 
-        const [updateUserTemplate] = await connection.execute(
-            `UPDATE templates SET name = ?, budgetPeriod = ? WHERE userId = ? AND templateId = ?`,
+        await connection.execute(
+            `UPDATE templates 
+             SET name = ?, budgetPeriod = ? 
+             WHERE userId = ? AND templateId = ?`,
             [name, period, userId, id]
         );
 
-        for(const category of categories) {
+        // get existing categories
+        const [existingCategories] = await connection.execute(
+            `SELECT id FROM templatecategories WHERE templateId = ?`,
+            [id]
+        );
+
+        const existingIds = existingCategories.map(c => c.id);
+        const incomingIds = categories.map(c => c.id).filter(id => id);
+
+        // DELETE removed categories
+        const toDelete = existingIds.filter(id => !incomingIds.includes(id));
+
+        for (const deleteId of toDelete) {
             await connection.execute(
-                `UPDATE templatecategories 
-                SET category_name = ?, limit_amount = ? 
-                WHERE id = ? AND templateId = ?`, 
-                [category.name, category.maximum, category.id, id]
+                `DELETE FROM templatecategories WHERE id = ?`,
+                [deleteId]
             );
         }
 
-        await connection.commit();
-        return {message: `Success update for ${name} template`}
+        // INSERT or UPDATE
+        for (const category of categories) {
 
-    } catch(error) {
+            if (!category.id) {
+                // new category
+                await connection.execute(
+                    `INSERT INTO templatecategories 
+                    (templateId, category_name, limit_amount)
+                    VALUES (?, ?, ?)`,
+                    [id, category.name, category.maximum]
+                );
+
+            } else {
+                // update existing
+                await connection.execute(
+                    `UPDATE templatecategories
+                    SET category_name = ?, limit_amount = ?
+                    WHERE id = ? AND templateId = ?`,
+                    [category.name, category.maximum, category.id, id]
+                );
+            }
+        }
+
+        await connection.commit();
+        return { message: "Success updated template" };
+
+    } catch (error) {
         await connection.rollback();
         return { error: 'Error updating template', details: error.message };
     } finally {
-        connection.release()
+        connection.release();
     }
 }

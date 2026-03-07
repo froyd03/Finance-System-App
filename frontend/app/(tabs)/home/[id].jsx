@@ -24,6 +24,7 @@ export default function TemplateForm() {
     const { id } = useLocalSearchParams();
 
     const [showModal, setShowModal] = useState(false);
+    
 
     const [responseMessage, setResponseMessage] = useState('');
     const handleAddCategory = (category) => {
@@ -65,16 +66,23 @@ export default function TemplateForm() {
     }
 
     const handleSaveBtn = async () => {
+        const templateBody = {
+            id,
+            name: templates.name,
+            period: templates.period,
+            categories: templates.categories
+        }
         try {
-            const templateBody = {
-                id,
-                name: templates.name,
-                period: templates.period,
-                categories: templates.categories
-            }
+            
+            if(!templates.userId || templates.userId === null){
+                const {data} = await templatesAPI.createTemplate(templateBody);
+                setResponseMessage(data.message);
 
-            const {data} = await templatesAPI.updateTemplate(templateBody);
-            console.log(data)
+            }else{ 
+                const {data} = await templatesAPI.updateTemplate(templateBody);
+                setResponseMessage(data.message);
+            }
+            
         } catch(error){
             console.log(error)
         }
@@ -109,7 +117,13 @@ export default function TemplateForm() {
             <View style={styles.dashboard}></View>
         
             <ScrollView contentContainerStyle={{ alignItems: "center", gap: 32, paddingBottom: 28,}} style={styles.itemContents}>
-                <View style={styles.inputContainer}>
+                
+                <View style={styles.inputContainer}> 
+                    {responseMessage &&
+                        <View style={styles.txtResponseContainer}>
+                            <Text style={styles.txtResponse}>{responseMessage}</Text>
+                        </View>
+                    }
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Template Name</Text>
                         <CustomTextInput 
@@ -139,12 +153,6 @@ export default function TemplateForm() {
                             <FontAwesome6 name="add" size={18} color="#000"/>
                         </Pressable>
                     </View>
-
-                    {responseMessage &&
-                        <View style={styles.txtResponseContainer}>
-                            <Text style={styles.txtResponse}>{responseMessage}</Text>
-                        </View>
-                    } 
                     
                     {templates.categories?.map((item, index) => {
                         const IconComponent = Icons[item.name];
@@ -375,5 +383,5 @@ const styles = StyleSheet.create({
     txtResponse: {
         color: '#FFF',
         fontWeight: '500'
-    }
+    },
 })

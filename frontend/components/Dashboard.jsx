@@ -7,7 +7,7 @@ import { templatesAPI } from '../services/api';
 export default function Dashboard() {
 
     const colorStatus = (status) => {
-        if(status >= 90){
+        if(status >= 80){
             return "#FF383C";
         }else if(status >= 70){
             return "#FFCC00"
@@ -108,7 +108,7 @@ export default function Dashboard() {
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => {
                 const Icon = Icons[item.name];
-                const percentStatus = Math.ceil((parseFloat(item.spent) / parseFloat(item.maximum)) * 100)
+
                 return (
                     <View style={styles.categoryItem}>
                         <View style={styles.iconContainer}>
@@ -122,8 +122,10 @@ export default function Dashboard() {
                                 </Text>
                             </View>
                             <View style={styles.statusBar}>
-                                <View style={[styles.inner, {width:`${budgetPercentStatus(item.spent, item.maximum)}%`}]}>
-                                </View>
+                                <View style={[
+                                    styles.inner, 
+                                    {width:`${budgetPercentStatus(item.spent, item.maximum)}%`}
+                                ]}></View>
                             </View>
                             <Text style={{
                                     color: colorStatus(budgetPercentStatus(item.spent, item.maximum)), 

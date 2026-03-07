@@ -2,8 +2,40 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import { StyleSheet, Text, View } from "react-native";
 import { ArrowDown, ArrowUp } from "../assets/icons/SvgIcons"
+import { usersAPI } from '../services/api';
+import { useEffect, useState } from 'react';
 
 export default function DashboardContent(){
+
+    const pesoFormat = (number, minDigit) => {
+        return number.toLocaleString(
+            'en-PH',
+            {
+                style: 'currency', 
+                currency: 'PHP',
+                minimumFractionDigits: minDigit, 
+            }
+        )
+    }
+
+    const budgetPercentStatus = (spent, maximum) => Math.ceil((parseFloat(spent) / parseFloat(maximum)) * 100) || ''
+
+    const [userBalance, setUserBalance] = useState(0);
+    useEffect(() => {
+        const fetchUserBalance = async () => {
+            try{
+                const {data} = await usersAPI.getBalance(7);
+                setUserBalance(data);
+                console.log(data)
+                
+            } catch(error) {
+                console.log("Error from components > DashbaordContainer", error)
+            }
+        }
+
+        fetchUserBalance();
+    }, [])
+
     return(
         <View style={styles.dashboardContent}>
             <View style={styles.moneyBalance}>{/* 1st row  (row)*/}
@@ -11,26 +43,36 @@ export default function DashboardContent(){
                     <Text style={{fontSize: 12, color: "#000000bf"}}>
                         <ArrowUp size={12} color="black" /> Total Balance
                     </Text>
-                    <Text style={{fontWeight: "bold", color: "#FFFFFF", fontSize: 20}}>₱12,345.67</Text>
+                    <Text style={{fontWeight: "bold", color: "#FFFFFF", fontSize: 20}}>
+                        {pesoFormat(parseFloat(userBalance.balance) || 0, 2)}
+                    </Text>
                 </View>
                 <View style={styles.seperator}></View> 
                 <View>
                     <Text style={{fontSize: 12, color: "#000000bf"}}>
                         <ArrowDown size={12} color="black" /> Total Expense
                     </Text>
-                    <Text style={{fontWeight: "bold", color: "#0068ff", fontSize: 20}}>-₱12,345.67</Text>
+                    <Text style={{fontWeight: "bold", color: "#0068ff", fontSize: 20}}>
+                        {pesoFormat(parseFloat(userBalance.expenses) || 0, 2)}
+                    </Text>
                 </View> 
             </View> 
             <View style={styles.balanceProgress}>{/* 2nd row*/}
                 <View style={styles.row1}>
-                    <Text style={{color: "#FFFFFF", fontSize:11}}>30%</Text>
+                    <Text style={{color: "#FFFFFF", fontSize:11}}>
+                        {budgetPercentStatus(userBalance.expenses, userBalance.balance)}%
+                    </Text>
                 </View>
                 <View style={styles.row2}>
-                    <Text style={{fontSize:11, color: "#000000b9", fontWeight: "bold"}}>₱30,000.00</Text>
+                    <Text style={{fontSize:11, color: "#000000b9", fontWeight: "bold"}}>
+                        {pesoFormat(parseFloat(userBalance.balance))}
+                    </Text>
                 </View>
             </View> 
             <View>{/* 3rd row*/}
-                <Text><Feather name="check-square" size={14} color="black" /> 30% Of your Expenses, Looks Good.</Text>
+                <Text><Feather name="check-square" size={14} color="black" /> 
+                    {budgetPercentStatus(userBalance.expenses, userBalance.balance)}% Of your Expenses, Looks Good.
+                </Text>
             </View> 
         </View>
     )

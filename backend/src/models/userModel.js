@@ -76,8 +76,15 @@ export async function isUserHasActiveTemplate(userId){
     }
 }
 
-// const user = {
-//     "email": "banataofroyd@gmail.com",
-//     "password": "Froydbanatao-03"
-// }
-// node ./src/models/userModel.js
+export async function getUserBalance(userId){
+    try{
+        const [userBalance] = await database.execute(
+            `SELECT balance, expenses FROM finance_app.users WHERE userId = ?`,
+            [userId]
+        )
+
+        return userBalance[0];
+    } catch(error) {
+        return {"response": "Failed to fetch balance, reload and try again"}; 
+    }
+}

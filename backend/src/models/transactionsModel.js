@@ -38,8 +38,8 @@ export async function createTransaction(transaction, userId) {
                 [newBalance, userId]
             );
         }else if(floatAmount > currentBalance){
+            return {message: "Insufficient funds"}
             throw new Error("Insufficient funds");
-
         }else{
             const newBalance = currentBalance - floatAmount;
             const newExpenses = currentExpenses + floatAmount;
@@ -61,6 +61,7 @@ export async function createTransaction(transaction, userId) {
                         const newSpent = parseFloat(templateCategory.spent) + floatAmount;
 
                         if(newSpent > parseFloat(templateCategory.limit_amount)) {
+                            return {message: `Your budget for ${templateCategory.category_name} is exceeded`}
                             throw new Error(`Your budget for ${templateCategory.category_name} is exceeded`);
                         }
 
