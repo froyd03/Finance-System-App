@@ -58,7 +58,8 @@ router.post('/', async (req, res) => {
 
 router.patch('/set-active', async (req, res) => {
     try {
-        const { templateId, userId } = req.body;
+        const templateId = req.query.templateId;
+        const userId = req.user.id;
         const result = await TemplateModel.setAsActiveTemplate(templateId, userId);
         res.status(200).json(result);
 

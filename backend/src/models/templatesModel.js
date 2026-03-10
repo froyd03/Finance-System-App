@@ -99,7 +99,8 @@ export async function setAsActiveTemplate(templateId, userId) { //patch
         await connection.beginTransaction();
 
         if(await isUserHasActiveTemplate(userId)) {
-            throw new Error("User already has an active template. Please deactivate the current template before setting a new one.");
+            return {message: "User already has an active template. Please deactivate the current template before setting a new one."}
+            //throw new Error("User already has an active template. Please deactivate the current template before setting a new one.");
         }
         //1. TODO: UPDATE users activeTemplate column with a templateId to reference with template table
         await connection.execute( //possible some bugs here

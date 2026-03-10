@@ -88,6 +88,15 @@ export default function TemplateForm() {
         }
     }
 
+    const handleSetActiveTemplate = async () => {
+        try {
+            const {data} = await templatesAPI.setAsActiveTemplate(id);
+            setResponseMessage(data.message);
+        } catch(error) {
+            console.log("set active template error", error)
+        }
+    }
+
     const [templates, setTemplates] = useState({});
     useEffect(() => {
         const fetchCategories = async () => {
@@ -103,10 +112,6 @@ export default function TemplateForm() {
 
         fetchCategories();
     }, []);
-
-    useEffect(() => {
-    
-    }, [templates]);
 
     return (
         <SafeAreaProvider style={styles.body}>
@@ -180,7 +185,7 @@ export default function TemplateForm() {
                     })}
                 </View>
                 <View>
-                    <Pressable style={styles.mainBtn}>
+                    <Pressable onPress={() => handleSetActiveTemplate()} style={styles.mainBtn}>
                         <Text style={styles.btnTxt}>Apply Template</Text>
                     </Pressable>
                     <Pressable onPress={() => handleSaveBtn()} style={styles.secondaryBtn}>
