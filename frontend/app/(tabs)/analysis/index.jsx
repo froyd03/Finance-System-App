@@ -30,7 +30,6 @@ export default function analysis() {
     }
 
     useEffect(() => {
-
         btnRef.current[0].setNativeProps({
             style: {backgroundColor: "#00d09e"},
         });

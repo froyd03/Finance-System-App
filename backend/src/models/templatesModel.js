@@ -154,7 +154,7 @@ export async function createTemplate(template, userId) {
     try {
         await connection.beginTransaction();
 
-        const { name, period, categories} = template;
+        const { name, period, categories } = template;
 
         const [result] = await connection.execute(
             `INSERT INTO templates(userId, name, budgetPeriod) VALUES (?, ?, ?)`, 

@@ -27,6 +27,7 @@ export default function TabLayout() {
                     tabBarIconStyle: styles.tabIcons,
                     tabBarShowLabel: false,
                     headerShown: false,
+                    unmountOnBlur: true,
                 }}
             > 
                 <Tabs.Screen 
@@ -36,7 +37,7 @@ export default function TabLayout() {
                         tabBarIcon: ({focused}) => 
                             <TabIcon focused={focused} 
                             icon={<Home size={24} color="#000000a2" />} 
-                        /> 
+                        /> ,
                     }}
                 />
                 <Tabs.Screen 

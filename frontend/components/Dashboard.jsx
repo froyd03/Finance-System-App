@@ -59,92 +59,99 @@ export default function Dashboard() {
     }, [])
 
     return (
-        <FlatList
-            ListHeaderComponent={     
-                <View style={{ gap: 28 }}>
-                    <View style={styles.monthlyUpdates}>
-                        <View style={{width:"35%", justifyContent: "center", alignItems: "center",}}>
-                            <View style={styles.iconCircle}>
-                                <Text>{budgetPercentStatus(remainingBudget(), getTotalBudget()) || 0}%</Text>
+        <>
+        {categoryData.length ? (
+            <FlatList
+                ListHeaderComponent={     
+                    <View style={{ gap: 28 }}>
+                        <View style={styles.monthlyUpdates}>
+                            <View style={{width:"35%", justifyContent: "center", alignItems: "center",}}>
+                                <View style={styles.iconCircle}>
+                                    <Text>{budgetPercentStatus(remainingBudget(), getTotalBudget()) || 0}%</Text>
+                                </View>
+                                <Text style={{textAlign: "center", fontSize: 12, width: "55%"}}>{categoryData[0]?.period} Budget</Text>
+                            
                             </View>
-                            <Text style={{textAlign: "center", fontSize: 12, width: "55%"}}>{categoryData[0]?.period} Budget</Text>
-                        
-                        </View>
-                        <View style={{height: "100%", width: 2, marginRight: 10, backgroundColor: "#FFFF"}}/>
+                            <View style={{height: "100%", width: 2, marginRight: 10, backgroundColor: "#FFFF"}}/>
 
-                        <View style={{width:"60%", gap: 8, justifyContent: "center", alignItems: "flex-start",}}>
-                            <View style={styles.itemRow}>
-                                <ArrowUp size={24} color="#000000b0" />
-                                <View>
-                                    <Text style={{fontSize: 12}}>Total Budget</Text>
-                                    <Text style={{fontSize: 16, fontWeight: "bold"}}>{pesoFormat(getTotalBudget())|| '...'}</Text>
+                            <View style={{width:"60%", gap: 8, justifyContent: "center", alignItems: "flex-start",}}>
+                                <View style={styles.itemRow}>
+                                    <ArrowUp size={24} color="#000000b0" />
+                                    <View>
+                                        <Text style={{fontSize: 12}}>Total Budget</Text>
+                                        <Text style={{fontSize: 16, fontWeight: "bold"}}>{pesoFormat(getTotalBudget())|| '...'}</Text>
+                                    </View>
+                                </View>
+                                <View style={{width: "100%", height: 2, backgroundColor: "#FFFF"}}/>
+                                <View style={styles.itemRow}>
+                                    <ArrowDown size={24} color="#0068ff" />
+                                    <View>
+                                        <Text style={{fontSize: 12}}>Remaining Budget</Text>
+                                        <Text style={{fontSize: 16, color: "#0068ff", fontWeight: "bold"}}>
+                                            {pesoFormat(remainingBudget()) || '...'}
+                                        </Text>
+                                    </View>
                                 </View>
                             </View>
-                            <View style={{width: "100%", height: 2, backgroundColor: "#FFFF"}}/>
-                            <View style={styles.itemRow}>
-                                <ArrowDown size={24} color="#0068ff" />
-                                <View>
-                                    <Text style={{fontSize: 12}}>Remaining Budget</Text>
-                                    <Text style={{fontSize: 16, color: "#0068ff", fontWeight: "bold"}}>
-                                        {pesoFormat(remainingBudget()) || '...'}
-                                    </Text>
-                                </View>
-                            </View>
                         </View>
-                    </View>
-                    <View style={styles.templateHeader}>
-                        <Text style={{fontWeight: "500", color: "#093030", fontSize: 16}}>
-                            Categories
-                        </Text>
-                        
-                        <Text style={{fontWeight: "500", color: "#093030", fontSize: 14}}>
-                            Resets in: 6d
-                        </Text>
-                    </View>
-                </View>
-            }
-            data={categoryData}
-            contentContainerStyle={styles.itemContainer}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => {
-                const Icon = Icons[item.name];
-
-                return (
-                    <View style={styles.categoryItem}>
-                        <View style={styles.iconContainer}>
-                            <Icon size={26} color="#FFF"/>
-                        </View>
-                        <View style={styles.categoryDetail}>
-                            <View style={styles.row1}>
-                                <Text style={{fontWeight: "500", fontSize: 14}}>{item.name}</Text>
-                                <Text style={{color: "#0068FF", fontWeight: "500", fontSize: 12}}>
-                                    {pesoFormat(+item.spent, 0)} / {pesoFormat(+item.maximum, 0)}
-                                </Text>
-                            </View>
-                            <View style={styles.statusBar}>
-                                <View style={[
-                                    styles.inner, 
-                                    {width:`${budgetPercentStatus(item.spent, item.maximum)}%`}
-                                ]}></View>
-                            </View>
-                            <Text style={{
-                                    color: colorStatus(budgetPercentStatus(item.spent, item.maximum)), 
-                                    fontWeight: "500", 
-                                    fontSize: 12}}
-                                >
-                                {pesoFormat((parseFloat(item.maximum) - parseFloat(item.spent)), 0)} Left
+                        <View style={styles.templateHeader}>
+                            <Text style={{fontWeight: "500", color: "#093030", fontSize: 16}}>
+                                Categories
+                            </Text>
+                            
+                            <Text style={{fontWeight: "500", color: "#093030", fontSize: 14}}>
+                                Resets in: 6d
                             </Text>
                         </View>
                     </View>
-                )
-            }}
-            showsVerticalScrollIndicator={false}
-            ListFooterComponent={<View style={{marginBottom: 30}}/>}
-        />
+                }
+                data={categoryData}
+                contentContainerStyle={styles.itemContainer}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={ ({ item }) => {
+                    const Icon = Icons[item.name];
+
+                    return ( 
+                        <View style={styles.categoryItem}>
+                            <View style={styles.iconContainer}>
+                                <Icon size={26} color="#FFF"/>
+                            </View>
+                            <View style={styles.categoryDetail}>
+                                <View style={styles.row1}>
+                                    <Text style={{fontWeight: "500", fontSize: 14}}>{item.name}</Text>
+                                    <Text style={{color: "#0068FF", fontWeight: "500", fontSize: 12}}>
+                                        {pesoFormat(+item.spent, 0)} / {pesoFormat(+item.maximum, 0)}
+                                    </Text>
+                                </View>
+                                <View style={styles.statusBar}>
+                                    <View style={[
+                                        styles.inner, 
+                                        {width:`${budgetPercentStatus(item.spent, item.maximum)}%`}
+                                    ]}></View>
+                                </View>
+                                <Text style={{
+                                        color: colorStatus(budgetPercentStatus(item.spent, item.maximum)), 
+                                        fontWeight: "500", 
+                                        fontSize: 12}}
+                                    >
+                                    {pesoFormat((parseFloat(item.maximum) - parseFloat(item.spent)), 0)} Left
+                                </Text>
+                            </View>
+                        </View>
+                    )
+                }}
+                showsVerticalScrollIndicator={false}
+                ListFooterComponent={<View style={{marginBottom: 30}}/>}
+            />
+        ):(
+            <Text style={{fontStyle: "italic"}}>No Template Active</Text>
+        )}
+        
+        </>
     )
 }
 
-
+//<Text style={{fontStyle: "italic"}}>No Template Active</Text>
 const styles = StyleSheet.create({
     itemContainer: {
         width: "100%",

@@ -77,7 +77,7 @@ export default function TemplateForm() {
             if(!templates.userId || templates.userId === null){
                 const {data} = await templatesAPI.createTemplate(templateBody);
                 setResponseMessage(data.message);
-
+                console.log(data)
             }else{ 
                 const {data} = await templatesAPI.updateTemplate(templateBody);
                 setResponseMessage(data.message);
@@ -104,7 +104,8 @@ export default function TemplateForm() {
             try{
                 const {data} = await templatesAPI.getCategoriesByTemplateId(id);
                 setTemplates(data);
-                console.log(data)
+                console.log(data.userId)
+
             } catch(error) {
                 console.log(error);
             }

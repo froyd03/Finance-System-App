@@ -26,13 +26,10 @@ export default function DashboardContent(){
             try{
                 const {data} = await usersAPI.getBalance(7);
                 setUserBalance(data);
-                console.log(data)
-                
             } catch(error) {
                 console.log("Error from components > DashbaordContainer", error)
             }
         }
-
         fetchUserBalance();
     }, [])
 
@@ -65,7 +62,7 @@ export default function DashboardContent(){
                 </View>
                 <View style={styles.row2}>
                     <Text style={{fontSize:11, color: "#000000b9", fontWeight: "bold"}}>
-                        {pesoFormat(parseFloat(userBalance.balance))}
+                        {pesoFormat(parseFloat(userBalance.balance || 0))}
                     </Text>
                 </View>
             </View> 

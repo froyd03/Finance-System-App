@@ -9,6 +9,7 @@ import { Link } from "expo-router";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from "../../../components/Header";
 import { templatesAPI } from "../../../services/api";
+import { useIsFocused } from '@react-navigation/native';
 
 export default function HomeScreen() {
 
@@ -62,8 +63,14 @@ export default function HomeScreen() {
     }
 
     useEffect(() => {
+        console.log('mounted')
         fetchTemplateData();
     }, [])
+
+    // const isFocused = useIsFocused();
+    // if (!isFocused) {
+    //     return; // Return null to effectively unmount the component when not focused
+    // }
 
     return (
         <SafeAreaProvider style={styles.body}>
@@ -109,9 +116,11 @@ export default function HomeScreen() {
                                 <Text style={{fontWeight: "500", color: "#093030", fontSize: 16}}>
                                     Quick Start Templates
                                 </Text>
-                                <Pressable style={styles.addBtn}>
-                                    <FontAwesome6 name="add" size={18} color="#000"/>
-                                </Pressable>
+                                <Link href={`/home/-1`} asChild>
+                                    <Pressable style={styles.addBtn}>
+                                        <FontAwesome6 name="add" size={18} color="#000"/>
+                                    </Pressable>
+                                </Link>
                             </View>
                         </View>
                     }
