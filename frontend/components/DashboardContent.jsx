@@ -33,7 +33,7 @@ export default function DashboardContent(){
     useEffect(() => {
         const fetchUserBalance = async () => {
             try{
-                const {data} = await usersAPI.getBalance(7);
+                const {data} = await usersAPI.getBalance();
                 setUserBalance(data);
             } catch(error) {
                 console.log("Error from components > DashbaordContainer", error)

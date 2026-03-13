@@ -79,7 +79,7 @@ export async function isUserHasActiveTemplate(userId){
 export async function getUserBalance(userId){
     try{
         const [userBalance] = await database.execute(
-            `SELECT balance, expenses FROM finance_app.users WHERE userId = ?`,
+            `SELECT balance, expenses FROM users WHERE userId = ?`,
             [userId]
         )
 
