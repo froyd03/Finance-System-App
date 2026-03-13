@@ -45,7 +45,7 @@ CREATE TABLE templateCategories(
     templateId INT NOT NULL,
     category_name VARCHAR(100) NOT NULL,
     limit_amount DECIMAL(10,2) NOT NULL,
-	spent DECIMAL(10,2) NOT NULL,
+	spent DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     
     FOREIGN KEY (templateId) REFERENCES templates(templateId) ON DELETE CASCADE
 );

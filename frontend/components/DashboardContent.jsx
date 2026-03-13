@@ -18,7 +18,16 @@ export default function DashboardContent(){
         )
     }
 
-    const budgetPercentStatus = (spent, maximum) => Math.ceil((parseFloat(spent) / parseFloat(maximum)) * 100) || ''
+    const budgetPercentStatus = (spent, maximum) => {
+        const result = Math.ceil((parseFloat(spent) / parseFloat(maximum)) * 100) || 0
+
+        return Number.isFinite(result) ? result : 0;
+    } 
+    const remaningPercentage = (spent, maximum) => {
+        const result = Math.ceil(100 - ((parseFloat(spent) / parseFloat(maximum)) * 100))
+
+        return Number.isFinite(result) ? result : 0;
+    }
 
     const [userBalance, setUserBalance] = useState(0);
     useEffect(() => {
@@ -57,10 +66,10 @@ export default function DashboardContent(){
             <View style={styles.balanceProgress}>{/* 2nd row*/}
                 <View style={styles.row1}>
                     <Text style={{color: "#FFFFFF", fontSize:11}}>
-                        {budgetPercentStatus(userBalance.expenses, userBalance.balance)}%
+                        {budgetPercentStatus(userBalance.expenses, userBalance.balance) || 0}%
                     </Text>
                 </View>
-                <View style={styles.row2}>
+                <View style={[styles.row2, {width: `${remaningPercentage(userBalance.expenses, userBalance.balance)}%`}]}>
                     <Text style={{fontSize:11, color: "#000000b9", fontWeight: "bold"}}>
                         {pesoFormat(parseFloat(userBalance.balance || 0))}
                     </Text>
@@ -106,7 +115,7 @@ const styles = StyleSheet.create({
     },
 
     row1: {
-        width: "30%",
+        position: 'absolute',
         height: "100%",
         borderTopLeftRadius: 12,
         borderBottomLeftRadius: 12,
@@ -116,7 +125,8 @@ const styles = StyleSheet.create({
     },
 
     row2: {
-        width: "70%",
+        position: 'absolute',
+        right: 0,
         height: "100%",
         borderRadius: 12,
         backgroundColor: "#FFFFFF",

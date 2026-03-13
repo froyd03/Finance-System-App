@@ -63,7 +63,6 @@ export default function HomeScreen() {
     }
 
     useEffect(() => {
-        console.log('mounted')
         fetchTemplateData();
     }, [])
 
@@ -81,7 +80,7 @@ export default function HomeScreen() {
                     refreshControl={
                         <RefreshControl progressViewOffset={-40} refreshing={refreshing} onRefresh={onRefresh} />
                     }>
-                    <DashboardContent />
+                    {!refreshing && <DashboardContent />}
                 </ScrollView>
             </View>
             <View style={styles.itemContents}>

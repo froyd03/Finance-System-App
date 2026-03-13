@@ -62,7 +62,6 @@ export default function TemplateForm() {
                 index === targetIndex ? {...value, maximum: newValue} : value
             )
         }))
-        console.log(templates);
     }
 
     const handleSaveBtn = async () => {
@@ -77,7 +76,7 @@ export default function TemplateForm() {
             if(!templates.userId || templates.userId === null){
                 const {data} = await templatesAPI.createTemplate(templateBody);
                 setResponseMessage(data.message);
-                console.log(data)
+                //console.log(data)
             }else{ 
                 const {data} = await templatesAPI.updateTemplate(templateBody);
                 setResponseMessage(data.message);
@@ -97,22 +96,30 @@ export default function TemplateForm() {
         }
     }
 
-    const [templates, setTemplates] = useState({});
+    const [templates, setTemplates] = useState({
+        userId: '',
+        name: '',
+        period: '',
+        categories: []
+    });
+
     useEffect(() => {
         const fetchCategories = async () => {
-            
             try{
                 const {data} = await templatesAPI.getCategoriesByTemplateId(id);
-                setTemplates(data);
-                console.log(data.userId)
-
+                if(id !== '-1'){
+                    setTemplates(data);
+                }
             } catch(error) {
                 console.log(error);
             }
         }
-
         fetchCategories();
     }, []);
+
+    useEffect(() => {
+        console.log(templates)
+    }, [templates])
 
     return (
         <SafeAreaProvider style={styles.body}>

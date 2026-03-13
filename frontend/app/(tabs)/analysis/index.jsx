@@ -35,7 +35,6 @@ export default function analysis() {
         });
     }, [])
 
-
     const barData = [
         {
           value: 40,
@@ -93,7 +92,6 @@ export default function analysis() {
         {value: 30, frontColor: '#ED6665'},
     ];
     
-
     return (
     <>
       <SafeAreaView style={styles.body}>

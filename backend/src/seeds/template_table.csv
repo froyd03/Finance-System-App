@@ -1,0 +1,4 @@
+userId,templateId,name,budgetPeriod,startDate,endDate
+NULL,38,"Student Budget",Weekly,NULL,NULL
+NULL,39,"Family Essentials",Monthly,NULL,NULL
+NULL,40,"Everyday Spending",Daily,NULL,NULL

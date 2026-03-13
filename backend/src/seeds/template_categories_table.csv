@@ -1,0 +1,10 @@
+id,templateId,category_name,limit_amount,spent
+67,39,Food,5000.00,0.00
+68,39,Rent,10000.00,0.00
+69,39,Entertainment,3000.00,0.00
+70,39,Medicine,200.00,0.00
+71,40,Food,500.00,0.00
+72,40,Transport,80.00,0.00
+73,38,Food,3000.00,0.00
+74,38,Groceries,1500.00,0.00
+75,38,Savings,1500.00,0.00

@@ -78,7 +78,7 @@ export default function Category(){
         <SafeAreaProvider style={styles.body}>
             <Header backButton={true} title={category}/>
             <View style={styles.headerDashboard}>
-                <View style={{marginTop: 41}}>
+                <View style={{marginTop: 74}}>
                     <DashboardContent />
                 </View>
             </View>
@@ -135,9 +135,9 @@ const styles = StyleSheet.create({
     },
 
     headerDashboard: {
-        height: "32%",
-        alignItems: "center",
-        justifyContent: "center"
+       height: "32%",
+        flexDirection: "column",
+        gap: 22,  
     },
     
     itemContents: {
