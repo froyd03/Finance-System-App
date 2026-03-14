@@ -112,7 +112,7 @@ export default function Category(){
                 />
                 <Link href={`/categories/AddExpense`} asChild>
                 <Pressable style={styles.btnExpense}>
-                    <Text style={{color: "#093030", fontSize: 16, fontWeight: "500"}}>Add Expenses</Text>
+                    <Text style={{color: "#093030", fontSize: 16, fontWeight: "500"}}>Add Expenses/Income</Text>
                 </Pressable>
                 </Link>
             </View>

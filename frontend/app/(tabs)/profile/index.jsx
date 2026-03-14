@@ -6,6 +6,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from '../../../components/Header';
 import * as SecureStore from 'expo-secure-store';
 import {router} from 'expo-router'
+import { useEffect, useState } from 'react';
+import { usersAPI } from '../../../services/api';
 
 const profile = () => {
 
@@ -13,6 +15,19 @@ const profile = () => {
         await SecureStore.deleteItemAsync('token');
         router.replace('/')
     }
+
+    const [user, setUser] = useState('');
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try{
+                const {data} = await usersAPI.getUserInfo()
+                setUser(data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchUserInfo();
+    }, [])
 
     return (
       <SafeAreaProvider style={styles.body}>
@@ -23,7 +38,7 @@ const profile = () => {
                         <Profile size={84} color="#FFF" />
                     </View>
                     <Text style={{fontSize: 22, color: "#093030", fontWeight: "500"}}>
-                        Froyd Banatao
+                        {user}
                     </Text>
                 </View>
             </View>

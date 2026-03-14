@@ -5,7 +5,10 @@ import {
     Text, 
     View,
     AppState,
-    Keyboard
+    Keyboard,
+    Platform,
+    ScrollView,
+    ActivityIndicator
 } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CustomTextInput from '../components/CustomTextInput';
@@ -15,19 +18,6 @@ import { authAPI } from '../services/api.js';
 import * as SecureStore from 'expo-secure-store';
 
 export default function SignUp() {
-
-    const appState = useRef(AppState.currentState);
-
-    useEffect(() => {
-        const sub = AppState.addEventListener("change", nextState => {
-            if (appState.current.match(/inactive|background/) && nextState === "active") {
-                Keyboard.dismiss();
-            }
-            appState.current = nextState;
-        });
-
-        return () => sub.remove();
-    }, []);
 
     const [signUpForm, setSignUpForm] = useState({
         fullName: '',
@@ -43,12 +33,13 @@ export default function SignUp() {
     };
 
     const [ errorMessage, setErrorMessage] = useState('');
-
+    const [loadingState, setLoadingState] = useState(false)
     const handleSubmit = async () => {
         try {
+            setLoadingState(true);
             const {data} = await authAPI.register(signUpForm);
             setErrorMessage(data.response)
-            console.log(data);
+
             if(data.status){
                 //navigate to home page
                 router.replace('/home');
@@ -57,74 +48,91 @@ export default function SignUp() {
             }
         } catch (error) {
             setErrorMessage('An error occurred during registration. error: ' + error.message);
+        } finally {
+            setLoadingState(false)
         }
     }
 
     return (
         <SafeAreaProvider>
-        <SafeAreaView style={styles.mainContainer}>
-            <Text style={styles.textH1}>Create an Account</Text>
+            <SafeAreaView style={styles.mainContainer}>
+                {/* Header stays fixed */}
+                <Text style={styles.textH1}>Create an Account</Text>
 
-            <KeyboardAvoidingView 
-                style={styles.formContainer} 
-                behavior="height"
-                enabled={true}
-                keyboardVerticalOffset="240"
-            >
-                <View style={styles.inputContainer}>
-                    <View style={styles.labeltxtInputContainer}>
-                        <Text style={styles.label}>Full Name</Text>
-                        <CustomTextInput 
-                            onChangeText={(value) => handleInputChange({fullName: value})}
-                            placeholder="John Reyes Doe" 
-                            TextInputStyle={styles.textInput}
-                        />
-                    </View>
+                {/* Form area */}
+                <View style={styles.formWrapper}>
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            contentContainerStyle={styles.scrollContainer}
+                            showsVerticalScrollIndicator={false}
+                        >
+                        <View style={styles.formContainer}>
+                            <View style={styles.inputContainer}>
+                            {/* Full Name */}
+                            <View style={styles.labeltxtInputContainer}>
+                                <Text style={styles.label}>Full Name</Text>
+                                <CustomTextInput 
+                                onChangeText={(value) => handleInputChange({fullName: value})}
+                                placeholder="John Reyes Doe" 
+                                TextInputStyle={styles.textInput}
+                                />
+                            </View>
 
-                    <View style={styles.labeltxtInputContainer}>
-                        <Text style={styles.label}>Email</Text>
-                        <CustomTextInput 
-                            onChangeText={(value) => handleInputChange({email: value})}
-                            placeholder="example@example.com" 
-                            TextInputStyle={styles.textInput}
-                        />
-                    </View>
+                            {/* Email */}
+                            <View style={styles.labeltxtInputContainer}>
+                                <Text style={styles.label}>Email</Text>
+                                <CustomTextInput 
+                                onChangeText={(value) => handleInputChange({email: value})}
+                                placeholder="example@example.com" 
+                                TextInputStyle={styles.textInput}
+                                />
+                            </View>
 
-                    <View style={styles.labeltxtInputContainer}>
-                        <Text style={styles.label}>Password</Text>
-                        <CustomTextInput 
-                            secureTextEntry 
-                            onChangeText={(value) => handleInputChange({password: value})} 
-                            placeholder="••••••••••" 
-                            TextInputStyle={styles.textInput}
-                        />
-                    </View>
+                            {/* Password */}
+                            <View style={styles.labeltxtInputContainer}>
+                                <Text style={styles.label}>Password</Text>
+                                <CustomTextInput 
+                                secureTextEntry
+                                onChangeText={(value) => handleInputChange({password: value})}
+                                placeholder="••••••••••"
+                                TextInputStyle={styles.textInput}
+                                />
+                            </View>
 
-                    <View style={styles.labeltxtInputContainer}>
-                        <Text style={styles.label}>Confirm Password</Text>
-                        <CustomTextInput 
-                            secureTextEntry 
-                            onChangeText={(value) => handleInputChange({confirmPassword: value})} 
-                            placeholder="••••••••••" 
-                            TextInputStyle={styles.textInput}
-                        />
-                    </View>
-                    <Text style={styles.txtError}>{errorMessage}</Text>
-                    <View style={styles.btnContainer}>
-                        <Pressable onPress={handleSubmit} style={styles.mainBtn}>
-                            <Text  style={styles.btnTxt}>Sign Up</Text>
-                        </Pressable>
+                            {/* Confirm Password */}
+                            <View style={styles.labeltxtInputContainer}>
+                                <Text style={styles.label}>Confirm Password</Text>
+                                <CustomTextInput 
+                                secureTextEntry
+                                onChangeText={(value) => handleInputChange({confirmPassword: value})}
+                                placeholder="••••••••••"
+                                TextInputStyle={styles.textInput}
+                                />
+                            </View>
 
-                        <Text>Already have an account? 
-                            <Link href='../' asChild><Text>Log In</Text></Link> 
-                        </Text>
-                    </View>
+                            <Text style={styles.txtError}>{errorMessage}</Text>
+
+                            <View style={styles.btnContainer}>
+                                <Pressable onPress={handleSubmit} style={styles.mainBtn}>
+                                {loadingState ? <ActivityIndicator /> : <Text style={styles.btnTxt}>Sign Up</Text>}
+                                </Pressable>
+                                <Text>
+                                Already have an account? 
+                                <Link href='../' asChild><Text> Log In</Text></Link>
+                                </Text>
+                            </View>
+                            </View>
+                        </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
-
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+            </SafeAreaView>
         </SafeAreaProvider>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
@@ -132,20 +140,31 @@ const styles = StyleSheet.create({
         gap: '8%'
     },
 
-    mainContainer: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        backgroundColor: '#00d09e'
+    formWrapper: {
+        flex: 1, // occupy the remaining space below header
+        width: '100%',
+    },
+
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
     },
 
     formContainer: {
         backgroundColor: '#ffffff',
-        height: '80%',
         width: '100%',
+        height: '90%',
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
+        paddingBottom: 120,
         alignItems: 'center',
+    },
+
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#00d09e',
+        alignItems: 'center', // centers header horizontally
     },
 
     inputContainer: {
@@ -153,7 +172,6 @@ const styles = StyleSheet.create({
         marginTop: '14%',
         width: '80%',
         gap: 18
-
     },
 
     labeltxtInputContainer: {

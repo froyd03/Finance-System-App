@@ -128,7 +128,6 @@ export async function getTransactionByCategory(category, userId) {
 export async function getTransactions(userId) {
     try {
         const query = "SELECT * FROM transactions WHERE userId = ? ORDER BY transactDate DESC";
-        console.log(userId)
         const [rows] = await database.execute(query, [userId]);
         return rows;
 

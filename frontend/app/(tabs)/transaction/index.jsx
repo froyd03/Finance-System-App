@@ -5,7 +5,7 @@ import TransactionCard from "../../../components/TransactionCard";
 import * as Icons from "@/assets/icons/SvgIcons";
 import Header from '../../../components/Header';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { transactionsAPI } from '../../../services/api';
+import { transactionsAPI, usersAPI } from '../../../services/api';
 
 const transactions = () => {
 
@@ -75,15 +75,40 @@ const transactions = () => {
     }
 
     const [refreshing, setRefreshing] = useState(false);
-
     const onRefresh = useCallback(() => {
         setRefreshing(true);
 
         setTimeout(() => {
             setRefreshing(false);
             fetchTransactions();
+            fetchUserBalance();
         }, 2000);
     }, []);
+
+    const pesoFormat = (number, minDigit) => {
+        return number?.toLocaleString(
+            'en-PH',
+            {
+                style: 'currency', 
+                currency: 'PHP',
+                minimumFractionDigits: minDigit, 
+            }
+        )
+    }
+
+    const [userBalance, setUserBalance] = useState(0);
+    useEffect(() => {
+        fetchUserBalance();
+    }, [])
+
+    const fetchUserBalance = async () => {
+        try{
+            const {data} = await usersAPI.getBalance();
+            setUserBalance(data);
+        } catch(error) {
+            console.log("Error from components > DashbaordContainer", error)
+        }
+    }
 
     return (
         <SafeAreaProvider style={styles.body}>
@@ -98,7 +123,9 @@ const transactions = () => {
                 <View style={styles.dashboardContent}>
                     <View style={styles.totalBalance}>
                         <Text style={{fontWeight: "500"}}>Total Balance</Text>
-                        <Text style={{fontWeight: "500", fontSize: 18}}>₱7,890.00</Text>
+                        <Text style={{fontWeight: "500", fontSize: 18}}>
+                            {pesoFormat(userBalance.balance, 2) || "₱0.00"}
+                        </Text>
                     </View>
                     <View style={styles.incomeExpense}>
                         <Pressable 
@@ -156,7 +183,7 @@ const transactions = () => {
                                     color: isBtnActive[1] ? "#FFF" : "#0068ff"
                                 }}
                             >
-                                ₱00.00
+                                {pesoFormat(userBalance.expenses, 2) || '₱0.00'}
                             </Text>
                         </Pressable>
                     </View>

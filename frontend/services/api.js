@@ -1,8 +1,9 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import {router} from 'expo-router'
-
-const API = axios.create({baseURL: 'https://fundra-go-api.onrender.com'});
+//https://fundra-go-api.onrender.com
+//http://192.168.1.2:5000
+const API = axios.create({baseURL: 'http://192.168.1.2:5000'});
 
 API.interceptors.request.use(
   async (config) => {
@@ -58,5 +59,6 @@ export const templatesAPI = {
 }
 
 export const usersAPI = {
-    getBalance: () => API.get(`/user/user-balance`)
+    getBalance: () => API.get(`/user/user-balance`),
+    getUserInfo: () => API.get('/user/user-info')
 }

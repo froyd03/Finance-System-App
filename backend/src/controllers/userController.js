@@ -37,4 +37,13 @@ router.get('/user-balance', authMiddleware, async (req, res) => {
     }
 })
 
+router.get('/user-info', authMiddleware, async (req, res) => {
+    try{
+        const userName = req.user.fullName;
+        res.status(200).json(userName);
+    }
+    catch(error){
+        res.status(401).json({response: error.message});  
+    }
+})
 export default router;

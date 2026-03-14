@@ -1,9 +1,12 @@
-import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, ScrollView, Pressable, ActivityIndicator } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from '../../../components/Header';
 import CustomTextInput from "../../../components/CustomTextInput";
 import { transactionsAPI } from '../../../services/api';
+import * as Icons from '@/assets/icons/SvgIcons.jsx';
+
+const CATEGORIES_OPTIONS = ["Income", "Food", "Transport", "Medicine", "Groceries", "Rent", "Gifts", "Savings", "Entertainment", "More"];
 
 export default function addExpense() {
 
@@ -17,12 +20,12 @@ export default function addExpense() {
     });
 
     const [responseMessage, setResponseMessage] = useState("");
+    const [loadingState, setLoadingState] = useState(false);
     const handleSubmitForm = async () => {
-        console.log(expenseForm)
 
         try{ 
+            setLoadingState(true);
             const {data} = await transactionsAPI.createTransaction(expenseForm)
-            console.log(data)
             if(data.message === "Transaction created successfully"){
                 
                 setExpenseForm({
@@ -36,12 +39,21 @@ export default function addExpense() {
         } catch(error) {
             setResponseMessage(error);
             console.log(error)
+        } finally {
+            setLoadingState(false)
         }
+    }
+
+    const inputref = useRef(null)
+    const handleSelectOptions = (value) => {
+        setExpenseForm(prev => ({...prev, category: value}))
+        inputref.current.blur(false);
+        setFocus(false)
     }
     
     return (
         <SafeAreaProvider style={styles.body}>
-            <Header backButton={true} title="Add Expenses"/>
+            <Header backButton={true} title="Add Income/Expenses"/>
             <View style={styles.headerDashboard}>
 
             </View>
@@ -56,15 +68,33 @@ export default function addExpense() {
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Category</Text>
                         <CustomTextInput 
-                            onFocus={() => setFocus(true)} 
+                            onFocus={() => setFocus(true)}
                             onBlur={() => setFocus(false)} 
+                            ref={inputref}
                             placeholder="Food" 
                             TextInputStyle={styles.textInput}
                             onChangeText={(value) => setExpenseForm({ ...expenseForm, category: value})}
+                            showSoftInputOnFocus={false}
                             value={expenseForm.category}
                         />
+                        {isFocus && <ScrollView style={styles.selectOptions}>
+                            {CATEGORIES_OPTIONS.map(value => {
+                                const Icon = Icons[value];
+                                return(
+                                    <Pressable 
+                                        key={value}
+                                        style={[styles.options, {backgroundColor: expenseForm.category === value ? '#FFF': ''}]} 
+                                        onPress={() => handleSelectOptions(value)}>
+                                        <Icon color="#00000089" size={24}/>
+                                        <Text style={{fontSize: 14, color: '#000000bd', fontWeight: 500}}>
+                                            {value}
+                                        </Text>
+                                    </Pressable>
+                                )
+                            })}
+                            <View style={{marginBottom: 18}}/>
+                        </ScrollView>}
                     </View>
-
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Amount</Text>
                         <CustomTextInput 
@@ -99,7 +129,7 @@ export default function addExpense() {
                 
                 <View style={styles.actionBtn}>
                     <Pressable onPress={handleSubmitForm} style={styles.mainBtn}>
-                        <Text style={styles.btnTxt}>Save</Text>
+                        {loadingState? <ActivityIndicator/> :<Text style={styles.btnTxt}>Save</Text>}
                     </Pressable>
                 </View>
             </ScrollView>
@@ -184,6 +214,23 @@ const styles = StyleSheet.create({
     txtResponse: {
         color: '#FFF',
         fontWeight: '500'
-    }
+    },
 
+    selectOptions: {
+        backgroundColor: "#dff7e2",
+        padding: 12,
+        borderRadius: 18,
+        position: 'absolute',
+        bottom: -130,
+        zIndex: 1,
+        width: "100%",
+        height: 130,
+    },
+
+    options: {
+        padding: 8,
+        flexDirection: "row",
+        gap: 24,
+        borderRadius: 12,
+    }
 })

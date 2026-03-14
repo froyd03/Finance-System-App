@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Pressable, ScrollView, Modal} from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from '../../../components/Header';
@@ -24,7 +24,15 @@ export default function TemplateForm() {
     const { id } = useLocalSearchParams();
 
     const [showModal, setShowModal] = useState(false);
+
+    const [isFocus, setFocus] = useState(false);
+    const inputref = useRef(null)
     
+    const handleSelectOptions = (value) => {
+        setTemplates(prev => ({...prev, period: value}))
+        inputref.current.blur(false);
+        setFocus(false)
+    }
 
     const [responseMessage, setResponseMessage] = useState('');
     const handleAddCategory = (category) => {
@@ -117,10 +125,6 @@ export default function TemplateForm() {
         fetchCategories();
     }, []);
 
-    useEffect(() => {
-        console.log(templates)
-    }, [templates])
-
     return (
         <SafeAreaProvider style={styles.body}>
             <Header 
@@ -150,11 +154,29 @@ export default function TemplateForm() {
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Budget Period</Text>
                         <CustomTextInput 
+                            onFocus={() => setFocus(true)}
+                            onBlur={() => setFocus(false)} 
+                            ref={inputref}
                             placeholder="Weekly" 
                             TextInputStyle={styles.textInput}
+                            showSoftInputOnFocus={false}
                             value={templates.period}
-                            onChangeText={value => handleInputTemplateForm({period: value})}
                         />
+                        {isFocus && <View style={styles.selectOptions}>
+                            {["Daily", "Weekly", "Monthly"].map(value => {
+                                return(
+                                    <Pressable 
+                                        key={value}
+                                        style={[styles.options, {backgroundColor: templates.period === value ? '#FFF': ''}]} 
+                                        onPress={() => handleSelectOptions(value)}>
+                                        <Text style={{fontSize: 14, color: '#000000bd', fontWeight: 500}}>
+                                            {value}
+                                        </Text>
+                                    </Pressable>
+                                )
+                            })}
+                            <View style={{marginBottom: 18}}/>
+                        </View>}
                     </View>
                 </View>
 
@@ -397,4 +419,22 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontWeight: '500'
     },
+
+    selectOptions: {
+        backgroundColor: "#dff7e2",
+        padding: 12,
+        borderRadius: 18,
+        position: 'absolute',
+        bottom: -130,
+        zIndex: 1,
+        width: "100%",
+        height: 130,
+    },
+
+    options: {
+        padding: 8,
+        flexDirection: "row",
+        gap: 24,
+        borderRadius: 12,
+    }
 })
