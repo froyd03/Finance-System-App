@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Pressable, ScrollView, Modal} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from '../../../components/Header';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -22,6 +22,7 @@ const CATEGORY_ICONS = [
 export default function TemplateForm() {
 
     const { id } = useLocalSearchParams();
+    const router = useRouter();
 
     const [showModal, setShowModal] = useState(false);
 
@@ -84,12 +85,13 @@ export default function TemplateForm() {
             if(!templates.userId || templates.userId === null){
                 const {data} = await templatesAPI.createTemplate(templateBody);
                 setResponseMessage(data.message);
-                //console.log(data)
+                router.back();
+                router.navigate(`/home/${data.id}`)
             }else{ 
                 const {data} = await templatesAPI.updateTemplate(templateBody);
                 setResponseMessage(data.message);
+                router.back();
             }
-            
         } catch(error){
             console.log(error)
         }
