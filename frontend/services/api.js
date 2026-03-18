@@ -54,8 +54,8 @@ export const templatesAPI = {
     updateTemplate: (data) => API.put(`/templates`, data),//
     getUserTemplateCategory: () => API.get('/templates/user-template'),//
     getCategoriesByTemplateId: (templateId) => API.get(`/templates/categories/?templateId=${templateId}`),//
-    setAsActiveTemplate: (templatetId) =>API.patch(`/templates/set-active/?templateId=${templatetId}`)
-
+    setAsActiveTemplate: (templatetId) =>API.patch(`/templates/set-active/?templateId=${templatetId}`),
+    setDeactivateTemplate: (templatetId) =>API.patch(`/templates/set-deactivate/?templateId=${templatetId}`)
 }
 
 export const usersAPI = {

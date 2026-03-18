@@ -48,7 +48,7 @@ export async function authenticateUser({email, password}){
                 email: user[0].email, 
                 fullName: user[0].fullName
             }
-            const token = jwt.sign(payload, process.env.JWTSECRET, {expiresIn: "1h"});
+            const token = jwt.sign(payload, process.env.JWTSECRET, {expiresIn: "3d"});
 
             if(token) return {"response": token, "status": true};  
             else throw new Error("Error login! no token");

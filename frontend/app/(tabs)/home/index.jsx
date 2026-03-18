@@ -52,11 +52,13 @@ export default function HomeScreen() {
         }, 2000);
     }, []);
 
+
     const [templateData, setTemplateData] = useState([]);
     const fetchTemplateData = async () => {
         try{
             const {data} = await templatesAPI.getTemplates();
             setTemplateData(data)
+
         } catch(error) {
             console.log(error)
         }
@@ -66,10 +68,10 @@ export default function HomeScreen() {
         fetchTemplateData();
     }, [])
 
-    // const isFocused = useIsFocused();
-    // if (!isFocused) {
-    //     return; // Return null to effectively unmount the component when not focused
-    // }
+    const isFocused = useIsFocused();
+    if (!isFocused) {
+        return; // Return null to effectively unmount the component when not focused
+    }
 
     return (
         <SafeAreaProvider style={styles.body}>
@@ -134,10 +136,11 @@ export default function HomeScreen() {
                                 icon={<Icons.Profile size={24} color='#FFF'/>}
                                 title={item.name}
                                 budgetDuration={item.budgetPeriod}
+                                isActive={item.isActive}
+                                
                             />
                         </Link>
                         </>
-                        
                     }
                     ListFooterComponent={<View style={{marginBottom: 30}}/>}
                     showsVerticalScrollIndicator={false}

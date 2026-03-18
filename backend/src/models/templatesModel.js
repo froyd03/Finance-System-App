@@ -22,12 +22,19 @@ export async function getTemplateByUserId(userId) {
                 templates.userId,
                 templates.templateId AS id,
                 templates.name,
-                templates.budgetPeriod
+                templates.budgetPeriod,
+                EXISTS (
+                    SELECT 1 
+                    FROM users 
+                    WHERE users.activeTemplateId = templates.templateId
+                ) AS isActive
             FROM templates 
-            WHERE userId = ? OR userId IS NULL
-            ORDER BY userId ASC;`,
+            WHERE templates.userId = ? OR templates.userId IS NULL
+            ORDER BY userId;`,
             [userId]
         );
+
+        console.log(rows)
 
         return rows      
     } catch (error) {
@@ -67,7 +74,12 @@ export async function getCategoriesByTemplateId(templateId, userId) {
                 templates.name AS template,
                 templates.budgetPeriod AS period,
                 category_name AS name, 
-                limit_amount AS maximum
+                limit_amount AS maximum,
+                EXISTS (
+                    SELECT 1 
+                    FROM users 
+                    WHERE users.activeTemplateId = templates.templateId
+                ) AS isActive
             FROM templates 
             JOIN templatecategories ON templates.templateId = templatecategories.templateId
             WHERE templates.templateId = ? AND (templates.userId = ? OR templates.userId IS NULL)`,
@@ -84,6 +96,7 @@ export async function getCategoriesByTemplateId(templateId, userId) {
             userId: rows[0].userId,
             name: rows[0].template,
             period: rows[0].period,
+            isActive: rows[0].isActive,
             categories: categoryFiltered
         };
     } catch (error) {
@@ -146,6 +159,36 @@ export async function setAsActiveTemplate(templateId, userId) { //patch
     } finally {
         connection.release();
     }
+}
+
+export async function setDeactivateTemplate(templateId, userId){
+    const connection = await database.getConnection();
+
+    try {
+        await connection.beginTransaction();
+        
+        //1. TODO: UPDATE users activeTemplate column with a templateId to reference with template table
+        await connection.execute( //possible some bugs here
+            `UPDATE users SET activeTemplateId = null WHERE userId = ?;`, 
+            [userId]
+        );
+        
+        //2. TODO: Update template startDate to current date and endDate to startDate + budgetPeriod
+        await connection.execute(
+            `UPDATE templates SET startDate = null, endDate = null WHERE templateId = ? AND userId = ?`, 
+            [templateId, userId]
+        );
+
+        await connection.commit();
+        return { message: "Deactivated successfully" };
+
+    } catch (error) {
+        await connection.rollback();
+        return { error: error.message };
+
+    } finally {
+        connection.release();
+    } 
 }
 
 export async function createTemplate(template, userId) {

@@ -5,12 +5,13 @@ import { Edit } from "@/assets/icons/SvgIcons";
 
 export default function TemplateCard(props) {
 
+    const isActive = props.isActive ? true : false
+
     return(
         <View style={styles.cardContainer}>
-
             <View style={styles.titleContainer}>
                 <View style={styles.iconContainer}>
-                    {props.icon}
+                    {props.icon} 
                 </View>
                 <View style={{justifyContent: "center", gap: 4}}>
                     <Text style={{fontSize: 15, color: "#093030", fontWeight: "bold"}}>{props.title}</Text>
@@ -18,10 +19,11 @@ export default function TemplateCard(props) {
                 </View>
             </View>
 
-            <View >
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
+                {isActive && <View style={styles.bullet}/>}
                 <Edit size={22} color="#3299FF"/>
             </View>
-        </View> 
+        </View>
     )
 }
 
@@ -45,4 +47,11 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         backgroundColor: "#0068ff",
     },
+
+    bullet: {
+        height: 12,
+        width: 12,
+        borderRadius: '50%',
+        backgroundColor: '#00D09E'
+    }
 })

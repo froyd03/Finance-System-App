@@ -104,10 +104,20 @@ export default function TemplateForm() {
         }
     }
 
+    const handleDeactivateTemplate = async () => {
+        try {
+            const {data} = await templatesAPI.setDeactivateTemplate(id);
+            setResponseMessage(data.message);
+        } catch(error) {
+            console.log("set active template error", error)
+        }
+    }
+
     const [templates, setTemplates] = useState({
         userId: '',
         name: '',
         period: '',
+        isActive: false,
         categories: []
     });
 
@@ -214,13 +224,18 @@ export default function TemplateForm() {
                         )
                     })}
                 </View>
-                <View>
+                <View style={{width:'95%'}}>
                     <Pressable onPress={() => handleSetActiveTemplate()} style={styles.mainBtn}>
                         <Text style={styles.btnTxt}>Apply Template</Text>
                     </Pressable>
                     <Pressable onPress={() => handleSaveBtn()} style={styles.secondaryBtn}>
                         <Text style={styles.btnTxt}>Save Changes</Text>
                     </Pressable>
+                    {(templates.isActive ? true : false) && 
+                    <Pressable onPress={() => handleDeactivateTemplate()} style={styles.deactBtn}>
+                        <Text style={styles.btnTxt}>Deactivate</Text>
+                    </Pressable>
+                    }
                 </View>
             </ScrollView>
             <Modal
@@ -344,17 +359,23 @@ const styles = StyleSheet.create({
 
     mainBtn:{
         backgroundColor: '#00d09e',
-        paddingVertical: 8,
-        paddingHorizontal: 38,
+        paddingVertical: 12,
         borderRadius: 14,
         alignItems: 'center',
-        marginTop: 8
+        marginTop: 8,
     },
 
     secondaryBtn:{
         backgroundColor: '#00d0a025',
-        paddingVertical: 8,
-        paddingHorizontal: 38,
+        paddingVertical: 12,
+        borderRadius: 14,
+        alignItems: 'center',
+        marginTop: 8,
+    },
+
+    deactBtn: {
+        backgroundColor: '#EF9A9A',
+        paddingVertical: 12,
         borderRadius: 14,
         alignItems: 'center',
         marginTop: 8,
@@ -362,7 +383,7 @@ const styles = StyleSheet.create({
 
     btnTxt: {
         fontWeight: 500,
-        fontSize: 16
+        fontSize: 14,
     },
 
     centeredView: {

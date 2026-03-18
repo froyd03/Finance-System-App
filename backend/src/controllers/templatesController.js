@@ -15,6 +15,33 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.post('/', async (req, res) => {
+    try {
+        const template = req.body;
+        const userId = req.user.id;
+        const newTemplate = await TemplateModel.createTemplate(template, userId);
+        res.status(201).json(newTemplate);
+
+    } catch (error) {
+
+        console.error('Error creating template:', error);
+        res.status(500).json({ error: 'Failed to create template' });
+    }
+});
+
+router.put('/', async (req, res) => {
+    try {
+        const templateForm = req.body;
+        const userId = req.user.id;
+        const result = await TemplateModel.updateTemplate(templateForm, userId);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error('Error setting active template:', error);
+        res.status(500).json({ error: 'Failed to update template  template' });   
+    }
+});
+
 router.get('/categories', async (req, res) => {
     try{
         const templateId = req.query.templateId;
@@ -41,20 +68,6 @@ router.get('/user-template', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
-    try {
-        const template = req.body;
-        const userId = req.user.id;
-        const newTemplate = await TemplateModel.createTemplate(template, userId);
-        res.status(201).json(newTemplate);
-
-    } catch (error) {
-
-        console.error('Error creating template:', error);
-        res.status(500).json({ error: 'Failed to create template' });
-    }
-  
-});
 
 router.patch('/set-active', async (req, res) => {
     try {
@@ -69,16 +82,16 @@ router.patch('/set-active', async (req, res) => {
     }
 });
 
-router.put('/', async (req, res) => {
+router.patch('/set-deactivate', async (req, res) => {
     try {
-        const templateForm = req.body;
+        const templateId = req.query.templateId;
         const userId = req.user.id;
-        const result = await TemplateModel.updateTemplate(templateForm, userId);
+        const result = await TemplateModel.setDeactivateTemplate(templateId, userId);
         res.status(200).json(result);
 
     } catch (error) {
         console.error('Error setting active template:', error);
-        res.status(500).json({ error: 'Failed to update template  template' });   
+        res.status(500).json({ error: 'Failed to set active template' });   
     }
 });
     
