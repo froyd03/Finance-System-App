@@ -1,16 +1,19 @@
-import { StyleSheet, Text, View, ScrollView, Pressable, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable, ActivityIndicator, Modal } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Header from '../../../components/Header';
 import CustomTextInput from "../../../components/CustomTextInput";
 import { transactionsAPI } from '../../../services/api';
 import * as Icons from '@/assets/icons/SvgIcons.jsx';
+import Feather from '@expo/vector-icons/Feather';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const CATEGORIES_OPTIONS = ["Income", "Food", "Transport", "Medicine", "Groceries", "Rent", "Gifts", "Savings", "Entertainment", "More"];
 
 export default function addExpense() {
 
     const [isFocus, setFocus] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [expenseForm, setExpenseForm] = useState({
         category: '',
@@ -25,6 +28,7 @@ export default function addExpense() {
 
         try{ 
             setLoadingState(true);
+            setModalVisible(true);
             const {data} = await transactionsAPI.createTransaction(expenseForm)
             if(data.message === "Transaction created successfully"){
                 
@@ -50,6 +54,10 @@ export default function addExpense() {
         inputref.current.blur(false);
         setFocus(false)
     }
+
+    const handleBtnModal = () => {
+        setModalVisible(false);
+    }
     
     return (
         <SafeAreaProvider style={styles.body}>
@@ -60,11 +68,6 @@ export default function addExpense() {
             <ScrollView contentContainerStyle={{alignItems: "center", gap: 32, paddingBottom: 28,}} style={styles.itemContents}>
                 
                 <View style={styles.inputContainer}>
-                    {responseMessage &&
-                        <View style={styles.txtResponseContainer}>
-                            <Text style={styles.txtResponse}>{responseMessage}</Text>
-                        </View>
-                    } 
                     <View style={styles.labeltxtInputContainer}>
                         <Text style={styles.label}>Category</Text>
                         <CustomTextInput 
@@ -129,10 +132,40 @@ export default function addExpense() {
                 
                 <View style={styles.actionBtn}>
                     <Pressable onPress={handleSubmitForm} style={styles.mainBtn}>
-                        {loadingState? <ActivityIndicator/> :<Text style={styles.btnTxt}>Save</Text>}
+                        {loadingState ? <ActivityIndicator/> :<Text style={styles.btnTxt}>Save</Text>}
                     </Pressable>
                 </View>
             </ScrollView>
+            <Modal
+                animationType='fade'
+                visible={modalVisible}
+                backdropColor='#ffffff00'
+            >
+                <View style={styles.centeredView}>
+                    {loadingState ?
+                        (<ActivityIndicator size='large'/>) :
+                        (<View style={styles.modalView}>
+                            {responseMessage === "Transaction created successfully" ?
+                                <Feather name="check-circle" size={44} color="#00de9487" />
+                                :
+                                <MaterialIcons name="error-outline" size={44} color="#EF9a9a" />
+                            }
+                            <Text style={{fontSize: 18, fontWeight: 500}}>
+                                {responseMessage === "Transaction created successfully" ? 
+                                    "Success"
+                                    :
+                                    "Error"
+                                }
+                            </Text>
+                            
+                            <Text style={{textAlign: 'center',}}>{responseMessage}</Text>
+                            <Pressable onPress={() => handleBtnModal(false)} style={styles.btnModalDone}> 
+                                <Text>Done</Text>
+                            </Pressable>
+                        </View>)
+                    }
+                </View>
+            </Modal>
         </SafeAreaProvider>
     )
 }
@@ -203,19 +236,6 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
 
-    txtResponseContainer: {
-        alignItems: 'center',
-        backgroundColor: '#4091fbba',
-        width: '100%',
-        borderRadius: 8,
-        paddingVertical: 4
-    },
-
-    txtResponse: {
-        color: '#FFF',
-        fontWeight: '500'
-    },
-
     selectOptions: {
         backgroundColor: "#dff7e2",
         padding: 12,
@@ -232,5 +252,30 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 24,
         borderRadius: 12,
+    },
+
+    centeredView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    modalView: {
+        backgroundColor: '#FFF',
+        alignItems: 'center',
+        padding: 18,
+        gap: 6,
+        borderRadius: 16,
+        maxWidth: '70%',
+        width: '100%'
+    },
+
+    btnModalDone: {
+        width: "100%",
+        alignItems: 'center',
+        backgroundColor: '#00d09e',
+        marginTop: 8,
+        padding: 6,
+        borderRadius: 8
     }
 })

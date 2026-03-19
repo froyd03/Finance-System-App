@@ -6,6 +6,7 @@ import * as Icons from "@/assets/icons/SvgIcons";
 import Header from '../../../components/Header';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { transactionsAPI, usersAPI } from '../../../services/api';
+import { useIsFocused } from '@react-navigation/native';
 
 const transactions = () => {
 
@@ -108,6 +109,11 @@ const transactions = () => {
         } catch(error) {
             console.log("Error from components > DashbaordContainer", error)
         }
+    }
+
+    const isFocused = useIsFocused();
+    if (!isFocused) {
+        return; // Return null to effectively unmount the component when not focused
     }
 
     return (

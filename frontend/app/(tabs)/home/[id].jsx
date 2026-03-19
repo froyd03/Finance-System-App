@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, ScrollView, Modal} from 'react-native'
+import { StyleSheet, Text, View, Pressable, ScrollView, Modal, ActivityIndicator, ToastAndroid} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -7,6 +7,8 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import CustomTextInput from "../../../components/CustomTextInput";
 import * as Icons from '@/assets/icons/SvgIcons';
 import { templatesAPI } from '../../../services/api';
+import Feather from '@expo/vector-icons/Feather';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const CATEGORY_ICONS = [
     "Food", 
@@ -25,6 +27,7 @@ export default function TemplateForm() {
     const router = useRouter();
 
     const [showModal, setShowModal] = useState(false);
+    const [showModalConfirm, setShowModalConfirm] = useState(false);
 
     const [isFocus, setFocus] = useState(false);
     const inputref = useRef(null)
@@ -73,6 +76,7 @@ export default function TemplateForm() {
         }))
     }
 
+    const [loadingState, setLoadingState] = useState(false);
     const handleSaveBtn = async () => {
         const templateBody = {
             id,
@@ -81,26 +85,40 @@ export default function TemplateForm() {
             categories: templates.categories
         }
         try {
-            
+            setLoadingState(true)
+            setShowModalConfirm(true);
             if(!templates.userId || templates.userId === null){
                 const {data} = await templatesAPI.createTemplate(templateBody);
-                setResponseMessage(data.message);
                 router.back();
-                router.navigate(`/home/${data.id}`)
+                router.navigate(`/home/${data.id}`);
+                ToastAndroid.show(data.message, ToastAndroid.LONG);
+                setShowModalConfirm(false);
             }else{ 
                 const {data} = await templatesAPI.updateTemplate(templateBody);
                 setResponseMessage(data.message);
-                router.back();
             }
         } catch(error){
             console.log(error)
+        } finally {
+            setLoadingState(false)
         }
     }
 
     const handleSetActiveTemplate = async () => {
         try {
+            setLoadingState(true)
+            setShowModalConfirm(true);
             const {data} = await templatesAPI.setAsActiveTemplate(id);
-            setResponseMessage(data.message);
+            
+            if(data.message === "User already has an active template. Please deactivate the current template before setting a new one.") {
+                setResponseMessage(data.message);
+                setLoadingState(false)
+            }else{
+                ToastAndroid.show(data.message, ToastAndroid.LONG);
+                router.replace('/home');
+                setLoadingState(false)
+                setShowModalConfirm(false);
+            }
         } catch(error) {
             console.log("set active template error", error)
         }
@@ -108,8 +126,14 @@ export default function TemplateForm() {
 
     const handleDeactivateTemplate = async () => {
         try {
+            setLoadingState(true)
+            setShowModalConfirm(true);
             const {data} = await templatesAPI.setDeactivateTemplate(id);
-            setResponseMessage(data.message);
+            if(data.message === "Deactivated successfully"){
+                router.back();
+                ToastAndroid.show(data.message, ToastAndroid.LONG);
+            }else{
+            }
         } catch(error) {
             console.log("set active template error", error)
         }
@@ -275,6 +299,36 @@ export default function TemplateForm() {
                             <Text style={styles.btnTxt}>Cancel</Text>
                         </Pressable>
                     </View>
+                </View>
+            </Modal>
+            <Modal
+                animationType='fade'
+                visible={showModalConfirm}
+                backdropColor='#ffffff00'
+            >
+                <View style={styles.centeredView}>
+                    {loadingState ?
+                        (<ActivityIndicator size='large'/>) :
+                        (<View style={styles.modalView}>
+                            {responseMessage === "Success updated template" ?
+                                <Feather name="check-circle" size={44} color="#00de9487" />
+                                :
+                                <MaterialIcons name="error-outline" size={44} color="#EF9a9a" />
+                            }
+                            <Text style={{fontSize: 18, fontWeight: 500}}>
+                                {responseMessage === "Success updated template" ? 
+                                    "Success"
+                                    :
+                                    "Error"
+                                }
+                            </Text>
+                            
+                            <Text style={{textAlign: 'center',}}>{responseMessage}</Text>
+                            <Pressable onPress={() => setShowModalConfirm(false)} style={styles.btnModalDone}> 
+                                <Text>Close</Text>
+                            </Pressable>
+                        </View>)
+                    }
                 </View>
             </Modal>
         </SafeAreaProvider>
@@ -459,5 +513,30 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 24,
         borderRadius: 12,
+    },
+
+    centeredView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    modalView: {
+        backgroundColor: '#FFF',
+        alignItems: 'center',
+        padding: 18,
+        gap: 6,
+        borderRadius: 16,
+        maxWidth: '70%',
+        width: '100%'
+    },
+
+    btnModalDone: {
+        width: "100%",
+        alignItems: 'center',
+        backgroundColor: '#00d09e',
+        marginTop: 8,
+        padding: 6,
+        borderRadius: 8
     }
 })
